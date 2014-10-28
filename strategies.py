@@ -991,9 +991,11 @@ class MaterialPlayer(Person):
                     break
                 elif card.color == "green" or card.color == "blue":
                     self.my_player_card = self.findMatchingId(card.id)
+        else:
+            self.my_player_card = 0
 
     def ageTwoStrategy(self):
-        pass
+        self.ageOneStrategy()
 
     def ageThreeStrategy(self):
         pass
