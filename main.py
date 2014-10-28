@@ -6,7 +6,7 @@ __author__ = 'Matthew Armbruster'
 import sqlite3
 import sys
 import random
-import strategies
+import strategy
 import inspect
 
 
@@ -20,7 +20,7 @@ class Game(object):
 
         self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Jenny', 'Jon']
         self.player_strategy = []
-        for name, obj in inspect.getmembers(strategies, inspect.isclass):
+        for name, obj in inspect.getmembers(strategy, inspect.isclass):
             if obj.difficulty > 0:
                 i = 0
                 while i < obj.number_in_options:
@@ -85,7 +85,7 @@ class Game(object):
             i += 1
 
         if not just_computer:
-            self.player.append(strategies.HumanPlayer(self.boards[-1]))
+            self.player.append(strategy.HumanPlayer(self.boards[-1]))
             self.player.reverse()  # so the Human goes first and cannot look at what the others did.
 
         i = 0
