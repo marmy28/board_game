@@ -1,5 +1,4 @@
-import generalfunctions as genF  # may have problems here
-import random
+import generalfunctions as genF
 import sys
 
 
