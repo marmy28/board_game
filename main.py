@@ -16,12 +16,12 @@ import inspect
 
 class Game(object):
 
-    def __init__(self, number_of_players, just_computer):
+    def __init__(self, number_of_players, difficulty_level, just_computer):
 
         self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Jenny', 'Jon']
         self.player_strategy = []
         for name, obj in inspect.getmembers(strategy, inspect.isclass):
-            if obj.difficulty > 0:
+            if obj.difficulty == difficulty_level:
                 i = 0
                 while i < obj.number_in_options:
                     self.player_strategy.append(obj)  # imports strategies from file
@@ -35,8 +35,8 @@ class Game(object):
         con = sqlite3.connect("database.db")
         with con:
             cur = con.cursor()
-            aorb = ['a', 'b']
-            cur.execute("SELECT * FROM boards WHERE cSide IS ?", (aorb[random.randint(0, 1)],))
+            a_or_b = ['a', 'b']
+            cur.execute("SELECT * FROM boards WHERE cSide IS ?", (a_or_b[random.randint(0, 1)],))
             boards = cur.fetchall()
             for board in boards:
                 self.boards.append(Board(board, cur))
@@ -85,7 +85,7 @@ class Game(object):
             i += 1
 
         if not just_computer:
-            self.player.append(strategy.HumanPlayer(self.boards[-1]))
+            self.player.append(strategy.HumanPlayer(self.boards[-1]))  # this is referenced dynamically
             self.player.reverse()  # so the Human goes first and cannot look at what the others did.
 
         i = 0
@@ -306,10 +306,11 @@ class Wonder(object):
 ##############
 
 ## makes sure that the input is a correct option: 3--7 players
-sys.argv.append(7)
 
 
 if __name__ == '__main__':
+    sys.argv.append(7)
+    level = 2
     try:
         int(sys.argv[1])
     except ValueError:
@@ -324,7 +325,7 @@ if __name__ == '__main__':
         print "This game is for 3 to 7 players not %s." % sys.argv[1]
         sys.exit(1)
 
-    play_game = Game(number_of_players, just_computer=True)  # change this to true when debugging
+    play_game = Game(number_of_players, level, just_computer=True)  # change this to true when debugging
     for age in range(0, 4):
         play_game.goToNextAge()
         for turn in range(0, 6):

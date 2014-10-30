@@ -3,8 +3,8 @@ from person import Person
 
 class BurnPlayer(Person):
     """This player burns every turn and should end up as the richest player at the end of the game."""
-    difficulty = 0
-    number_in_options = 0
+    difficulty = 1
+    number_in_options = 1
 
     def __init__(self, name, the_board):
         super(BurnPlayer, self).__init__(name, the_board)

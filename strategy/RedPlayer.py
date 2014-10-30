@@ -2,7 +2,7 @@ from person import Person
 
 class RedPlayer(Person):
     """This player will look for red cards to play."""
-    difficulty = 1
+    difficulty = 2
     number_in_options = 1
 
     def __init__(self, name, the_board):
