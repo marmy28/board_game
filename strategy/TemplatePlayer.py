@@ -1,14 +1,18 @@
 from person import Person  # this allows you to use the functions in Person
 import random  # I have this because currently random is used.
 
-class CHANGEPlayer(Person):
+# The filename and the class must be the same name
+# The filename must end with Player.py for it to be recognized
+
+
+class TemplatePlayer(Person):
     """Change where it says 'CHANGE'"""
     difficulty = 0  # this should be between 1 and 3 signifying how difficult this strategy is
     number_in_options = 0  # how many times it is put in the array which is randomly shuffled
     # number_in_options should be between 1 and 5. 5 making it more likely to be chosen
 
     def __init__(self, name, the_board):  # leave this alone
-        super(CHANGEPlayer, self).__init__(name, the_board)  # sends the name and board to Person
+        super(TemplatePlayer, self).__init__(name, the_board)  # sends the name and board to Person
 
     def decisionForTurn(self, check_hand=True):  # this is the function called from the Game class
         """ The following variables may be useful:
