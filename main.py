@@ -18,14 +18,17 @@ class Game(object):
 
     def __init__(self, number_of_players, difficulty_level, just_computer):
 
-        self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Jenny', 'Jon']
+        self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Jenny', 'Jon', 'Katie']
         self.player_strategy = []
         for name, obj in inspect.getmembers(strategy, inspect.isclass):
-            if obj.difficulty == difficulty_level:
-                i = 0
-                while i < obj.number_in_options:
-                    self.player_strategy.append(obj)  # imports strategies from file
-                    i += 1
+            if hasattr(obj, 'difficulty') and obj.difficulty == difficulty_level:
+                if hasattr(obj, 'number_in_options'):
+                    i = 0
+                    while i < obj.number_in_options:
+                        self.player_strategy.append(obj)  # imports strategies from file
+                        i += 1
+                else:
+                    self.player_strategy.append(obj)
         self.player = []
         self.boards = []
         self.age_number = 0  # start at zero until handOutCards
