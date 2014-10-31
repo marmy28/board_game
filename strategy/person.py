@@ -102,10 +102,10 @@ class Person(object):
                         self.any_material[i] = {'glass': 1, 'loom': 1, 'papyrus': 1}
                 else:
                     amount_per, coin, color, direction = ability.split()
-                    try:
+                    if color in self.neighbor[direction].cards_played:
                         total_amount = int(amount_per)*len(self.neighbor[direction]
                                                            .cards_played[color])
-                    except KeyError:
+                    else:
                         total_amount = 0
                     self.board.newMaterial(coin, total_amount)
             elif age == 3:
@@ -301,9 +301,9 @@ class Person(object):
         print '\nName\n----------'
         for keys, values in self.neighbor.items():
             print ' ', keys, '=', values.name, values.board.name
-            try:
+            if keys in self.trade:
                 print '    ', self.trade[keys]
-            except KeyError:
+            else:
                 print ''
 
     def printCardsInHand(self):
@@ -387,11 +387,9 @@ class Person(object):
                 print 'ACTUALLY discard', self.name
                 self.discardCard(card_to_play)
         if self.play_this_card is not None:
-            try:
-                self.cards_played[self.play_this_card.color].append(self.play_this_card)
-            except KeyError:
+            if self.play_this_card.color not in self.cards_played:
                 self.cards_played[self.play_this_card.color] = []
-                self.cards_played[self.play_this_card.color].append(self.play_this_card)
+            self.cards_played[self.play_this_card.color].append(self.play_this_card)
             self.discard_this_card = None
             coin_cost = -1 * self.play_this_card.cost['coin']
             self.board.newMaterial(u'coin', coin_cost)
@@ -498,9 +496,9 @@ class Person(object):
             total_amount = abs(self.neighbor[ability.split()[-1]].military_points_loss)
         else:
             amount_per, color, direction = ability.split()
-            try:
+            if color in self.neighbor[direction].cards_played:
                 total_amount = int(amount_per)*len(self.neighbor[direction].cards_played[color])
-            except KeyError:
+            else:
                 total_amount = 0
 
         return total_amount
