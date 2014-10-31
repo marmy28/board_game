@@ -235,7 +235,7 @@ class Card(object):
         self.color = parameters[2]
         self.age = parameters[3]
         self.number_of_players = parameters[4]
-        self.cost = {'coin': parameters[5], 'clay':parameters[6], 'ore': parameters[7]
+        self.cost = {'coin': parameters[5], 'clay': parameters[6], 'ore': parameters[7]
                      , 'stone': parameters[8], 'wood': parameters[9], 'glass': parameters[10]
                      , 'loom': parameters[11], 'papyrus': parameters[12]}
         self.free_from = parameters[13]
@@ -244,7 +244,7 @@ class Card(object):
         self.trading_cost = {'left': 0, 'right': 0}
 
     def makeFree(self):
-        self.cost = {'coin': 0, 'clay':0, 'ore': 0, 'stone': 0, 'wood': 0, 'glass': 0, 'loom': 0
+        self.cost = {'coin': 0, 'clay': 0, 'ore': 0, 'stone': 0, 'wood': 0, 'glass': 0, 'loom': 0
                      , 'papyrus': 0}
         self.trading_cost = {'left': 0, 'right': 0}
 

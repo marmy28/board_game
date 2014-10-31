@@ -1,4 +1,4 @@
-import generalfunctions as genF
+import generalfunctions as GF
 import sys
 
 
@@ -42,7 +42,7 @@ class Person(object):
         return self.shield_count > other.shield_count
 
     def __ge__(self, other):
-        return  self.shield_count >= other.shield_count
+        return self.shield_count >= other.shield_count
 
     def changeOfStrategy(self):
         # look in change_class.py if need help. will need to change over all of init parameters
@@ -51,13 +51,13 @@ class Person(object):
 
     def highestScienceValue(self):
         if self.any_science == 0:
-            return genF.getScienceScore(self.science)
+            return GF.getScienceScore(self.science)
         elif self.any_science == 1:
             a = self.science.copy()
             a[min(a, key=a.get)] += 1
             b = self.science.copy()
             b[max(b, key=b.get)] += 1
-            return max(genF.getScienceScore(a), genF.getScienceScore(b))
+            return max(GF.getScienceScore(a), GF.getScienceScore(b))
         elif self.any_science == 2:
             a = self.science.copy()
             a[min(a, key=a.get)] += 2
@@ -66,7 +66,7 @@ class Person(object):
             c = self.science.copy()
             c[min(c, key=c.get)] += 1
             c[min(c, key=c.get)] += 1
-            return max(genF.getScienceScore(a), genF.getScienceScore(b), genF.getScienceScore(c))
+            return max(GF.getScienceScore(a), GF.getScienceScore(b), GF.getScienceScore(c))
 
     def addToScience(self, ability):
         self.science[ability] += 1
@@ -94,7 +94,7 @@ class Person(object):
                     self.trade[ability.split()[1]][ability.split()[0]] = 1
             elif age == 2:
                 if "/" in ability:
-                    my_color = genF.whatMaterialColor(ability.split("/")[0])
+                    my_color = GF.whatMaterialColor(ability.split("/")[0])
                     i = len(self.any_material)
                     if my_color == 'brown':
                         self.any_material[i] = {'ore': 1, 'wood': 1, 'clay': 1, 'stone': 1}
@@ -107,7 +107,7 @@ class Person(object):
                                                            .cards_played[color])
                     except KeyError:
                         total_amount = 0
-                    self.board.newMaterial(coin,total_amount)
+                    self.board.newMaterial(coin, total_amount)
             elif age == 3:
                 if "coin" in ability:
                     self.addToTrading(ability, 2)
@@ -146,7 +146,7 @@ class Person(object):
         self.cards_CANNOT_play = []
         while i < len(self.cards_in_hand):
             if self.cards_in_hand[i]:
-                if self.canBuyCard(i):  # changed from == True...
+                if self.canBuyCard(i):
                     self.cards_CAN_play.append(self.cards_in_hand[i])
                 else:
                     self.cards_CANNOT_play.append(self.cards_in_hand[i])
@@ -178,31 +178,31 @@ class Person(object):
                 look_right_then_left = True  # goes right then left
 
             for side in sorted(self.trade.keys(), reverse=look_right_then_left):
-                final_cost[side] = genF.canBuyThroughTrade(needed_materials, self.trade[side]
-                                                           , self.neighbor[side].board.material)
+                final_cost[side] = GF.canBuyThroughTrade(needed_materials, self.trade[side]
+                                                         , self.neighbor[side].board.material)
 
-            genF.exterminateTooExpensiveOrGray(final_cost, wonder_eval.cost['coin'], needed_materials
-                                               , self.board.material['coin'])
+            GF.exterminateTooExpensiveOrGray(final_cost, wonder_eval.cost['coin'], needed_materials
+                                             , self.board.material['coin'])
             if len(needed_materials) == 0:
                 return False
 
             for side in sorted(self.trade.keys(), reverse=look_right_then_left):
                 if len(self.neighbor[side].board.split_material):
-                    genF.buyWithSplitTrade(needed_materials, self.neighbor[side].board.split_material
-                                           , self.trade[side], final_cost, side)
+                    GF.buyWithSplitTrade(needed_materials, self.neighbor[side].board.split_material
+                                         , self.trade[side], final_cost, side)
 
-            genF.exterminateTooExpensiveOrGray(final_cost, wonder_eval.cost['coin'], needed_materials
-                                               , self.board.material['coin'], check_gray=False)
-            genF.expelExtraMaterial(final_cost, needed_materials)
+            GF.exterminateTooExpensiveOrGray(final_cost, wonder_eval.cost['coin'], needed_materials
+                                             , self.board.material['coin'], check_gray=False)
+            GF.expelExtraMaterial(final_cost, needed_materials)
 
             if len(needed_materials) == 0:
                 return False
 
-            wonder_eval.trading_cost = genF.findCheapestTrade(final_cost)
+            wonder_eval.trading_cost = GF.findCheapestTrade(final_cost)
             return True
 
-    def canBuyCard(self, intCardNumber):
-        card_eval = self.cards_in_hand[intCardNumber]
+    def canBuyCard(self, card_number):
+        card_eval = self.cards_in_hand[card_number]
 
         already_have = self.checkIfNameInCardsInHand(card_eval.name)
         if already_have:
@@ -227,27 +227,27 @@ class Person(object):
                 look_right_then_left = True  # goes right then left
 
             for side in sorted(self.trade.keys(), reverse=look_right_then_left):
-                final_cost[side] = genF.canBuyThroughTrade(needed_materials, self.trade[side]
-                                                           , self.neighbor[side].board.material)
+                final_cost[side] = GF.canBuyThroughTrade(needed_materials, self.trade[side]
+                                                         , self.neighbor[side].board.material)
 
-            genF.exterminateTooExpensiveOrGray(final_cost, card_eval.cost['coin'], needed_materials
-                                               , self.board.material['coin'])
+            GF.exterminateTooExpensiveOrGray(final_cost, card_eval.cost['coin'], needed_materials
+                                             , self.board.material['coin'])
             if len(needed_materials) == 0:
                 return False
 
             for side in sorted(self.trade.keys(), reverse=look_right_then_left):
                 if len(self.neighbor[side].board.split_material):
-                    genF.buyWithSplitTrade(needed_materials, self.neighbor[side].board.split_material
-                                           , self.trade[side], final_cost, side)
+                    GF.buyWithSplitTrade(needed_materials, self.neighbor[side].board.split_material
+                                         , self.trade[side], final_cost, side)
 
-            genF.exterminateTooExpensiveOrGray(final_cost, card_eval.cost['coin'], needed_materials
-                                               , self.board.material['coin'], check_gray=False)
-            genF.expelExtraMaterial(final_cost, needed_materials)
+            GF.exterminateTooExpensiveOrGray(final_cost, card_eval.cost['coin'], needed_materials
+                                             , self.board.material['coin'], check_gray=False)
+            GF.expelExtraMaterial(final_cost, needed_materials)
 
             if len(needed_materials) == 0:
                 return False
 
-            card_eval.trading_cost = genF.findCheapestTrade(final_cost)
+            card_eval.trading_cost = GF.findCheapestTrade(final_cost)
             return True
 
     def checkIfNameInCardsInHand(self, given_name):
@@ -276,17 +276,17 @@ class Person(object):
         if len(needs_materials) == 0:
             return True
         if len(self.board.split_material) != 0:
-            next_cost = genF.buyWithSplit(needs_materials, self.board.split_material)
+            next_cost = GF.buyWithSplit(needs_materials, self.board.split_material)
             if next_cost == True:
                 return True
         else:
             next_cost = [needs_materials]
 
-        genF.compareDicts(next_cost)
-        final_cost = genF.buyWithSplit(next_cost, self.any_material)
+        GF.compareDicts(next_cost)
+        final_cost = GF.buyWithSplit(next_cost, self.any_material)
         if final_cost != True:
-            genF.compareDicts(final_cost)
-            final_cost = genF.eraseMoreExpensive(final_cost)
+            GF.compareDicts(final_cost)
+            final_cost = GF.eraseMoreExpensive(final_cost)
         return final_cost
 
     def printMaterials(self):
@@ -407,7 +407,10 @@ class Person(object):
             try:
                 self.discard_this_card = self.cards_CANNOT_play.pop(card_to_discard
                                                                     - len(self.cards_CAN_play))
-            except IndexError:
+            except IndexError as e:
+                print 'discardCard function'
+                print e.args
+                print e.message
                 print self.cards_CANNOT_play
                 print self.cards_CAN_play
                 print card_to_discard
@@ -425,7 +428,10 @@ class Person(object):
                 try:
                     self.cards_CANNOT_play.pop(card_construction_marker
                                                - len(self.cards_CAN_play))
-                except IndexError:
+                except IndexError as e:
+                    print 'playWonder function'
+                    print e.args
+                    print e.message
                     print self.cards_CANNOT_play
                     print self.cards_CAN_play
                     print card_construction_marker
