@@ -2,13 +2,11 @@ from person import Person
 import random
 
 class MaterialPlayer(Person):
-    """Change where it says 'CHANGE'"""
-    difficulty = 0  # this should be between 1 and 3 signifying how difficult this strategy is
-    number_in_options = 0  # how many times it is put in the array which is randomly shuffled
-    # number_in_options should be between 1 and 5. 5 making it more likely to be chosen
+    difficulty = 2
+    number_in_options = 1
 
-    def __init__(self, name, the_board):  # leave this alone
-        super(MaterialPlayer, self).__init__(name, the_board)  # sends the name and board to Person
+    def __init__(self, name, the_board):
+        super(MaterialPlayer, self).__init__(name, the_board)
         self.age = 1
         self.my_player_action = 'discardCard'
         self.my_player_card = 0
@@ -60,19 +58,20 @@ class MaterialPlayer(Person):
         if check_hand:
             self.use_free_card = True
             self.checkCardsInHand()  # keep inside this if statement so it will not be called when playing discard pile
-        if not (self.can_afford_wonder and self.board.wonders[0].wonderTotalCost() == 0) :
+        if not (self.can_afford_wonder and self.board.wonders[0].wonderTotalCost() == 0):
             self.checkNextWonder()  # this checks if your wonder is available
 
         self.lookAtMilitary()
         if not self.play_military:
             self.chooseAnAction()
-        return self.my_player_action, self.my_player_card  # the player_action can be: playCard, discardCard, or playWonder
-        # the player_card is the card you either want to play,
+        return self.my_player_action, self.my_player_card
+        # the player_action can be: playCard, discardCard, or playWonder
+        # the player_card is the card you either want to play, discard, or use to build the wonder
 
     def chooseAnAction(self):
         try:
             self.age = self.cards_CAN_play[0].age
-        except ValueError:
+        except IndexError:
             self.age = self.cards_CANNOT_play[0].age
 
         if self.age == 1:
@@ -119,7 +118,47 @@ class MaterialPlayer(Person):
         self.ageOneStrategy()
 
     def ageThreeStrategy(self):
-        pass
+        self.my_player_action = "playCard"
+        guilds = []
+        blue_cards = []
+        for card in self.cards_CAN_play:
+            if card.color == "purple":
+                guilds.append(card)
+            elif card.color == "blue":
+                blue_cards.append(card)
+        if len(guilds) > 0:
+            card_points_current = 0
+            card_cost = guilds[0].totalCost()
+            card_id = guilds[0].id
+            for card in guilds:
+                card_points = 0
+                if "/" not in card.ability:
+                    for special_ability in card.ability.split(" & "):
+                        card_points += self.pointsForEndCard(special_ability)
+                else:
+                    self.any_science += 1
+                    card_points = self.highestScienceValue()
+                    self.any_science -= 1
+                    card_points -= self.highestScienceValue()
+                if card_points > card_points_current or (card_points == card_points_current
+                                                         and card.totalCost() < card_cost):
+                    card_id = card.id
+                    card_points_current = card_points
+                    card_cost = card.totalCost()
+        elif len(blue_cards) > 0:
+            card_points = int(blue_cards[0].ability)
+            card_cost = blue_cards[0].totalCost()
+            card_id = blue_cards[0].id
+            for card in blue_cards:
+                if int(card.ability) > card_points or (int(card.ability) == card_points
+                                                       and card.totalCost() < card_cost):
+                    card_id = card.id
+                    card_points = int(card.ability)
+                    card_cost = card.totalCost()
+        else:
+            card_id = self.cards_CAN_play[0].id
+
+        self.my_player_card = self.findMatchingId(card_id)
 
     def lookAtMilitary(self):
         self.play_military = False
