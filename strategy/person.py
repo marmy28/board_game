@@ -437,7 +437,7 @@ class Person(object):
                     print card_construction_marker
                     print 'ERROR ERROR ERROR'
                     sys.exit(1)
-            if not self.cards_played.has_key('wonder'):
+            if 'wonder' not in self.cards_played:
                 self.cards_played['wonder'] = []
             self.cards_played['wonder'].append(self.board.wonders[0])
             self.discard_this_card = None
@@ -510,7 +510,7 @@ class Person(object):
             if ability == "guild either":
                 max_points = 0
                 for direction in ['right', 'left']:
-                    if self.neighbor[direction].cards_played.has_key('purple'):
+                    if 'purple' in self.neighbor[direction].cards_played:
                         for purple_card in self.neighbor[direction].cards_played['purple']:
                             card_points = 0
                             for special_ability in purple_card.ability.split(" & "):
