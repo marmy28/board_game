@@ -1,6 +1,7 @@
 from person import Person
 import random
 
+
 class MaterialPlayer(Person):
     difficulty = 2
     number_in_options = 1
@@ -192,11 +193,12 @@ class MaterialPlayer(Person):
             elif len(slimmer_military) > 0:
                 self.my_player_card = self.findMatchingId(slimmer_military[0].id)
             else:
-                self.my_player_card = random.shuffle(slim_military)[0]
+                random.shuffle(slim_military)
+                self.my_player_card = self.findMatchingId(slim_military[0].id)
 
-    def findMatchingId(self, cardId):
+    def findMatchingId(self, card_id):
         for index, card in enumerate(self.cards_CAN_play):
-            if card.id == cardId:
+            if card.id == card_id:
                 return index
 
     def neighborDoesNotHaveMaterial(self, ability):
