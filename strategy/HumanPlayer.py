@@ -2,9 +2,6 @@ from person import Person
 
 class HumanPlayer(Person):
     """This is the actual player."""
-    difficulty = 0  # do not increase this number or else it will be selected automatically
-    number_in_options = 0
-
     def __init__(self, the_board):
         name = raw_input("What is your name? ")
         print "Hello ", name
