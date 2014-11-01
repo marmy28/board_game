@@ -6,7 +6,7 @@ __author__ = 'Matthew Armbruster'
 import sqlite3
 import sys
 import random
-import strategies
+import strategy
 import inspect
 
 
@@ -16,16 +16,19 @@ import inspect
 
 class Game(object):
 
-    def __init__(self, number_of_players, just_computer):
+    def __init__(self, number_of_players, difficulty_level, just_computer):
 
         self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Jenny', 'Jon']
         self.player_strategy = []
-        for name, obj in inspect.getmembers(strategies, inspect.isclass):
-            if obj.difficulty > 0:
-                i = 0
-                while i < obj.number_in_options:
-                    self.player_strategy.append(obj)  # imports strategies from file
-                    i += 1
+        for name, obj in inspect.getmembers(strategy, inspect.isclass):
+            if hasattr(obj, 'difficulty') and obj.difficulty == difficulty_level:
+                if hasattr(obj, 'number_in_options'):
+                    i = 0
+                    while i < obj.number_in_options:
+                        self.player_strategy.append(obj)  # imports strategies from file
+                        i += 1
+                else:
+                    self.player_strategy.append(obj)
         self.player = []
         self.boards = []
         self.age_number = 0  # start at zero until handOutCards
@@ -35,8 +38,8 @@ class Game(object):
         con = sqlite3.connect("database.db")
         with con:
             cur = con.cursor()
-            aorb = ['a', 'b']
-            cur.execute("SELECT * FROM boards WHERE cSide IS ?", (aorb[random.randint(0, 1)],))
+            a_or_b = ['a', 'b']
+            cur.execute("SELECT * FROM boards WHERE cSide IS ?", (a_or_b[random.randint(0, 1)],))
             boards = cur.fetchall()
             for board in boards:
                 self.boards.append(Board(board, cur))
@@ -85,7 +88,7 @@ class Game(object):
             i += 1
 
         if not just_computer:
-            self.player.append(strategies.HumanPlayer(self.boards[-1]))
+            self.player.append(strategy.HumanPlayer(self.boards[-1]))  # this is referenced dynamically
             self.player.reverse()  # so the Human goes first and cannot look at what the others did.
 
         i = 0
@@ -180,26 +183,27 @@ class Game(object):
             if turn != 5:
                 player_resolve.handCardsToNeighbor(self.card_direction[self.age_number])
 
-        for player_play_discard in self.player:
-            if player_play_discard.play_discard_pile:
-                player_play_discard.cards_CAN_play = self.discarded_pile
-                player_action, player_card = player_play_discard.decisionForTurn(check_hand=False)
+        if len(self.discarded_pile) > 0:
+            for player_play_discard in self.player:
+                if player_play_discard.play_discard_pile:
+                    player_play_discard.cards_CAN_play = self.discarded_pile
+                    player_action, player_card = player_play_discard.decisionForTurn(check_hand=False)
 
-                if player_action == "playCard":
-                    player_play_discard.playCard(player_card, self.age_number)
-                elif player_action == "discardCard":
-                    player_play_discard.discardCard(player_card)
-                elif player_action == "playWonder":
-                    player_play_discard.playWonder(player_card)
+                    if player_action == "playCard":
+                        player_play_discard.playCard(player_card, self.age_number)
+                    elif player_action == "discardCard":
+                        player_play_discard.discardCard(player_card)
+                    elif player_action == "playWonder":
+                        player_play_discard.playWonder(player_card)
 
-                if player_play_discard.discard_this_card is not None:
-                    self.discarded_pile.append(player_play_discard.discard_this_card)
-                    player_play_discard.discard_this_card = None
+                    if player_play_discard.discard_this_card is not None:
+                        self.discarded_pile.append(player_play_discard.discard_this_card)
+                        player_play_discard.discard_this_card = None
 
-                player_play_discard.resolveAbility()
-                player_play_discard.cards_CAN_play = []
-                player_play_discard.play_discard_pile = False
-                break
+                    player_play_discard.resolveAbility()
+                    player_play_discard.cards_CAN_play = []
+                    player_play_discard.play_discard_pile = False
+                    break
 
         if player_can_play_both != "":
             print "PLAYING BOTH", player_can_play_both
@@ -235,7 +239,7 @@ class Card(object):
         self.color = parameters[2]
         self.age = parameters[3]
         self.number_of_players = parameters[4]
-        self.cost = {'coin': parameters[5], 'clay':parameters[6], 'ore': parameters[7]
+        self.cost = {'coin': parameters[5], 'clay': parameters[6], 'ore': parameters[7]
                      , 'stone': parameters[8], 'wood': parameters[9], 'glass': parameters[10]
                      , 'loom': parameters[11], 'papyrus': parameters[12]}
         self.free_from = parameters[13]
@@ -244,7 +248,7 @@ class Card(object):
         self.trading_cost = {'left': 0, 'right': 0}
 
     def makeFree(self):
-        self.cost = {'coin': 0, 'clay':0, 'ore': 0, 'stone': 0, 'wood': 0, 'glass': 0, 'loom': 0
+        self.cost = {'coin': 0, 'clay': 0, 'ore': 0, 'stone': 0, 'wood': 0, 'glass': 0, 'loom': 0
                      , 'papyrus': 0}
         self.trading_cost = {'left': 0, 'right': 0}
 
@@ -280,9 +284,9 @@ class Board(object):
             print 'Cannot do this transaction: insufficient funds'
 
     def newSplitMaterial(self, ability):
-        intIndex = len(self.split_material)
-        strMaterial = ability.split("/")
-        self.split_material[intIndex] = {strMaterial[0]: 1, strMaterial[1]: 1}
+        i = len(self.split_material)
+        material = ability.split("/")
+        self.split_material[i] = {material[0]: 1, material[1]: 1}
 
 
 class Wonder(object):
@@ -306,10 +310,11 @@ class Wonder(object):
 ##############
 
 ## makes sure that the input is a correct option: 3--7 players
-sys.argv.append(7)
 
 
 if __name__ == '__main__':
+    sys.argv.append(7)
+    level = 2
     try:
         int(sys.argv[1])
     except ValueError:
@@ -324,7 +329,7 @@ if __name__ == '__main__':
         print "This game is for 3 to 7 players not %s." % sys.argv[1]
         sys.exit(1)
 
-    play_game = Game(number_of_players, just_computer=True)  # change this to true when debugging
+    play_game = Game(number_of_players, level, just_computer=False)  # change this to true when debugging
     for age in range(0, 4):
         play_game.goToNextAge()
         for turn in range(0, 6):

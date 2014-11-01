@@ -1,5 +1,28 @@
-__author__ = 'Matthew Armbruster'
+#####################
+#### Decorators #####
+#####################
 
+def makeSureArray(func):
+    def checker(make_array, args):
+        if type(make_array) == dict:
+            new_array = [make_array.copy()]
+        else:
+            new_array = make_array
+        ret = func(new_array, args)
+        return ret
+    return checker
+
+
+def sortDict(func):
+    def checker(unsorted_dict):
+        sorted_dict = sorted(unsorted_dict, key=len)
+        ret = func(sorted_dict)
+        return ret
+    return checker
+    
+#####################
+#### Functions ######
+#####################
 
 def compareDicts(my_dict):
     intCounter = 0
@@ -30,25 +53,6 @@ def getScienceScore(science):
     return score
 
 
-def makeSureArray(func):
-    def checker(make_array, args):
-        if type(make_array) == dict:
-            new_array = [make_array.copy()]
-        else:
-            new_array = make_array
-        ret = func(new_array, args)
-        return ret
-    return checker
-
-
-def sortDict(func):
-    def checker(unsorted_dict):
-        sorted_dict = sorted(unsorted_dict, key=len)
-        ret = func(sorted_dict)
-        return ret
-    return checker
-
-
 @makeSureArray
 def buyWithSplit(cost_copy, split_mat):
     for key, sp_mat in split_mat.items():
@@ -57,7 +61,7 @@ def buyWithSplit(cost_copy, split_mat):
         for mat, amount in sp_mat.items():
             i = 0
             while i < my_length:
-                if cost_copy[i].has_key(mat) and amount > 0:
+                if (mat in cost_copy[i]) and amount > 0:
                     cost_copy.append(cost_copy[i].copy())
                     cost_copy[-1][mat] += amount
                     trigger[i] = True
@@ -89,7 +93,7 @@ def eraseMoreExpensive(card_cost):
         while intCounter2 < len(card_cost):
             j = 0
             for i in card_cost[intCounter].keys():
-                if card_cost[intCounter2].has_key(i):
+                if i in card_cost[intCounter2]:
                     if card_cost[intCounter][i] >= card_cost[intCounter2][i]:
                         j += 1
             if j == len(card_cost[intCounter].keys()):
@@ -106,7 +110,7 @@ def canBuyThroughTrade(needed_materials, trade_cost, neighbors_materials):
     for mat_options in needed_materials:
         spend_to_trade = 0
         for mat, amount in mat_options.items():
-            if neighbors_materials.has_key(mat):
+            if mat in neighbors_materials:
                 if neighbors_materials[mat] >= abs(amount):
                     spend_to_trade += (abs(amount)*trade_cost[whatMaterialColor(mat)])
                     mat_options.pop(mat)
@@ -149,7 +153,7 @@ def buyWithSplitTrade(cost, split_mat, trade_cost, coin_array, side):
         for mat, amount in sp_mat.items():
             i = 0
             while i < my_length:
-                if cost[i].has_key(mat) and amount > 0 > cost[i][mat]:
+                if (mat in cost[i]) and amount > 0 > cost[i][mat]:
                     cost.append(cost[i].copy())
                     coin_array['right'].append(coin_array['right'][i])
                     coin_array['left'].append(coin_array['left'][i])
