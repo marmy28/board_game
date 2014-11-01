@@ -329,7 +329,7 @@ if __name__ == '__main__':
         print "This game is for 3 to 7 players not %s." % sys.argv[1]
         sys.exit(1)
 
-    play_game = Game(number_of_players, level, just_computer=True)  # change this to true when debugging
+    play_game = Game(number_of_players, level, just_computer=False)  # change this to true when debugging
     for age in range(0, 4):
         play_game.goToNextAge()
         for turn in range(0, 6):
