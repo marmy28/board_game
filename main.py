@@ -1,4 +1,4 @@
-__author__ = 'Matthew Armbruster'
+__author__ = 'matthew'
 
 ##############
 # IMPORTS
@@ -18,7 +18,7 @@ class Game(object):
 
     def __init__(self, number_of_players, difficulty_level, just_computer):
 
-        self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Jenny', 'Jon']
+        self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Katie', 'Jon']
         self.player_strategy = []
         for name, obj in inspect.getmembers(strategy, inspect.isclass):
             if hasattr(obj, 'difficulty') and obj.difficulty == difficulty_level:
@@ -329,7 +329,7 @@ if __name__ == '__main__':
         print "This game is for 3 to 7 players not %s." % sys.argv[1]
         sys.exit(1)
 
-    play_game = Game(number_of_players, level, just_computer=False)  # change this to true when debugging
+    play_game = Game(number_of_players, level, just_computer=True)  # change this to true when debugging
     for age in range(0, 4):
         play_game.goToNextAge()
         for turn in range(0, 6):
