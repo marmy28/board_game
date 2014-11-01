@@ -3,8 +3,6 @@ import sys
 
 
 class Person(object):
-    difficulty = 0
-    number_in_options = 0
 
     def __init__(self, name, the_board):
         self.name = name
