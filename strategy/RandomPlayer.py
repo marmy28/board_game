@@ -1,6 +1,7 @@
 import random
 from person import Person
 
+
 class RandomPlayer(Person):
     """This player chooses randomly. Randomly chooses between playing a card or discarding."""
     difficulty = 1

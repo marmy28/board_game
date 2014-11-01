@@ -1,5 +1,6 @@
 from person import Person
 
+
 class HumanPlayer(Person):
     """This is the actual player."""
     def __init__(self, the_board):

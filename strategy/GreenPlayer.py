@@ -1,5 +1,6 @@
 from person import Person
 
+
 class GreenPlayer(Person):
     """This player will look for green cards to play."""
     difficulty = 2

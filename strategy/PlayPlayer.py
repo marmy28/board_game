@@ -1,6 +1,7 @@
 import random
 from person import Person
 
+
 class PlayPlayer(Person):
     """This player tries to play every turn."""
     difficulty = 2

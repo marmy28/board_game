@@ -1,6 +1,7 @@
 import random
 from person import Person
 
+
 class BurnPlayer(Person):
     """This player burns every turn and should end up as the richest player at the end of the game."""
     difficulty = 1
