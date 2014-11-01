@@ -490,21 +490,16 @@ class Person(object):
         self.play_this_card = None
 
     def pointsForEndCard(self, ability):
-        try:
-            if "loses" in ability:
-                total_amount = abs(self.neighbor[ability.split()[-1]].military_points_loss)
+        if "loses" in ability:
+            total_amount = abs(self.neighbor[ability.split()[-1]].military_points_loss)
+        else:
+            amount_per, color, direction = ability.split()
+            if color in self.neighbor[direction].cards_played:
+                total_amount = int(amount_per)*len(self.neighbor[direction].cards_played[color])
             else:
-                amount_per, color, direction = ability.split()
-                if color in self.neighbor[direction].cards_played:
-                    total_amount = int(amount_per)*len(self.neighbor[direction].cards_played[color])
-                else:
-                    total_amount = 0
+                total_amount = 0
 
-            return total_amount
-        except ValueError as e:
-            print ability
-            print e
-            sys.exit(1)
+        return total_amount
 
     def resolveCardAbilityENDOFGAME(self):
         for ability in self.resolve_ability_at_end:
@@ -514,8 +509,14 @@ class Person(object):
                     if 'purple' in self.neighbor[direction].cards_played:
                         for purple_card in self.neighbor[direction].cards_played['purple']:
                             card_points = 0
-                            for special_ability in purple_card.ability.split(" & "):
-                                card_points += self.pointsForEndCard(special_ability)
+                            if "/" not in purple_card.ability:
+                                for special_ability in purple_card.ability.split(" & "):
+                                    card_points += self.pointsForEndCard(special_ability)
+                            else:
+                                self.any_science += 1
+                                card_points = self.highestScienceValue()
+                                self.any_science -= 1
+                                card_points -= self.highestScienceValue()
                             if card_points > max_points:
                                 max_points = card_points
                 self.blue_points += max_points
