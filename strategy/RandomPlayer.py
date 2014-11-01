@@ -4,7 +4,6 @@ from person import Person
 class RandomPlayer(Person):
     """This player chooses randomly. Randomly chooses between playing a card or discarding."""
     difficulty = 1
-    number_in_options = 1
 
     def __init__(self, name, the_board):
         super(RandomPlayer, self).__init__(name, the_board)
