@@ -3,7 +3,6 @@ from person import Person
 class GreenPlayer(Person):
     """This player will look for green cards to play."""
     difficulty = 2
-    number_in_options = 1
 
     def __init__(self, name, the_board):
         super(GreenPlayer, self).__init__(name, the_board)
