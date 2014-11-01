@@ -8,8 +8,8 @@ import random  # I have this because currently random is used.
 class TemplatePlayer(Person):
     """Change where it says 'CHANGE'"""
     difficulty = 0  # this should be between 1 and 3 signifying how difficult this strategy is
-    number_in_options = 0  # how many times it is put in the array which is randomly shuffled
-    # number_in_options should be between 1 and 5. 5 making it more likely to be chosen
+    #number_in_options = 2  # how many times it is put in the array which is randomly shuffled
+    # the default for this is one, make sure to comment it back after debugging.
 
     def __init__(self, name, the_board):  # leave this alone
         super(TemplatePlayer, self).__init__(name, the_board)  # sends the name and board to Person
