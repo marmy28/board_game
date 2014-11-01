@@ -59,10 +59,13 @@ class MaterialPlayer(Person):
         if check_hand:
             self.use_free_card = True
             self.checkCardsInHand()  # keep inside this if statement so it will not be called when playing discard pile
-        if not (self.can_afford_wonder and self.board.wonders[0].wonderTotalCost() == 0):
-            self.checkNextWonder()  # this checks if your wonder is available
-        else:
-            self.play_wonder = True
+
+        self.play_wonder = False
+        if len(self.board.wonders) > 0:
+            if not (self.can_afford_wonder and self.board.wonders[0].wonderTotalCost() == 0):
+                self.checkNextWonder()  # this checks if your wonder is available
+            if self.can_afford_wonder and self.board.wonders[0].wonderTotalCost() == 0:
+                self.play_wonder = True
 
         self.lookAtMilitary()
         if not self.play_military:
@@ -77,6 +80,7 @@ class MaterialPlayer(Person):
 
     def burnCard(self):
         colors = ["green", "gray"]
+        card_id = -1
         for color in colors:
             card_id = self.getIdForColor(color)
             if card_id != -1:
@@ -237,7 +241,7 @@ class MaterialPlayer(Person):
                 return index
         for index, card in enumerate(self.cards_CANNOT_play):
             if card.id == card_id:
-                return (len(self.cards_CAN_play) + index)
+                return len(self.cards_CAN_play) + index
 
     def neighborDoesNotHaveMaterial(self, ability):
         for key, value in self.neighbor["left"].board.material.items():
