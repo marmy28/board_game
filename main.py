@@ -18,7 +18,7 @@ class Game(object):
 
     def __init__(self, number_of_players, difficulty_level, just_computer):
 
-        self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Jenny', 'Jon', 'Katie']
+        self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Jenny', 'Jon']
         self.player_strategy = []
         for name, obj in inspect.getmembers(strategy, inspect.isclass):
             if hasattr(obj, 'difficulty') and obj.difficulty == difficulty_level:
@@ -283,9 +283,9 @@ class Board(object):
             print 'Cannot do this transaction: insufficient funds'
 
     def newSplitMaterial(self, ability):
-        intIndex = len(self.split_material)
-        strMaterial = ability.split("/")
-        self.split_material[intIndex] = {strMaterial[0]: 1, strMaterial[1]: 1}
+        i = len(self.split_material)
+        material = ability.split("/")
+        self.split_material[i] = {material[0]: 1, material[1]: 1}
 
 
 class Wonder(object):
