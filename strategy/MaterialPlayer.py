@@ -11,6 +11,7 @@ class MaterialPlayer(Person):
         self.my_player_action = 'discardCard'
         self.my_player_card = 0
         self.play_military = False
+        self.play_wonder = False
 
     def decisionForTurn(self, check_hand=True):  # this is the function called from the Game class
         """ The following variables may be useful:
@@ -60,13 +61,48 @@ class MaterialPlayer(Person):
             self.checkCardsInHand()  # keep inside this if statement so it will not be called when playing discard pile
         if not (self.can_afford_wonder and self.board.wonders[0].wonderTotalCost() == 0):
             self.checkNextWonder()  # this checks if your wonder is available
+        else:
+            self.play_wonder = True
 
         self.lookAtMilitary()
         if not self.play_military:
-            self.chooseAnAction()
+            if not self.play_wonder:
+                self.chooseAnAction()
+            else:
+                self.my_player_action = "playWonder"
+                self.burnCard()
         return self.my_player_action, self.my_player_card
         # the player_action can be: playCard, discardCard, or playWonder
         # the player_card is the card you either want to play, discard, or use to build the wonder
+
+    def burnCard(self):
+        colors = ["green", "gray"]
+        for color in colors:
+            card_id = self.getIdForColor(color)
+            if card_id != -1:
+                self.my_player_card = self.findMatchingId(card_id)
+                break
+        if card_id == -1:
+            for card in self.cards_CAN_play:
+                if card.give_free:
+                    card_id = card.id
+            for card in self.cards_CANNOT_play:
+                if card.give_free:
+                    card_id = card.id
+            if card_id != -1:
+                self.my_player_card = self.findMatchingId(card_id)
+            else:
+                self.my_player_card = 0
+        
+    def getIdForColor(self, color):
+        card_id = -1
+        for card in self.cards_CAN_play:
+            if card.color == color:
+                card_id = card.id
+        for card in self.cards_CANNOT_play:
+            if card.color == color:
+                card_id = card.id
+        return card_id
 
     def chooseAnAction(self):
         try:
@@ -199,6 +235,9 @@ class MaterialPlayer(Person):
         for index, card in enumerate(self.cards_CAN_play):
             if card.id == card_id:
                 return index
+        for index, card in enumerate(self.cards_CANNOT_play):
+            if card.id == card_id:
+                return (len(self.cards_CAN_play) + index)
 
     def neighborDoesNotHaveMaterial(self, ability):
         for key, value in self.neighbor["left"].board.material.items():
