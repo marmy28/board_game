@@ -4,7 +4,6 @@ import random
 
 class MaterialPlayer(Person):
     difficulty = 2
-    number_in_options = 1
 
     def __init__(self, name, the_board):
         super(MaterialPlayer, self).__init__(name, the_board)
