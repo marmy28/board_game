@@ -4,7 +4,6 @@ from person import Person
 class PlayPlayer(Person):
     """This player tries to play every turn."""
     difficulty = 2
-    number_in_options = 1
 
     def __init__(self, name, the_board):
         super(PlayPlayer, self).__init__(name, the_board)
