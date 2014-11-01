@@ -490,16 +490,21 @@ class Person(object):
         self.play_this_card = None
 
     def pointsForEndCard(self, ability):
-        if "loses" in ability:
-            total_amount = abs(self.neighbor[ability.split()[-1]].military_points_loss)
-        else:
-            amount_per, color, direction = ability.split()
-            if color in self.neighbor[direction].cards_played:
-                total_amount = int(amount_per)*len(self.neighbor[direction].cards_played[color])
+        try:
+            if "loses" in ability:
+                total_amount = abs(self.neighbor[ability.split()[-1]].military_points_loss)
             else:
-                total_amount = 0
+                amount_per, color, direction = ability.split()
+                if color in self.neighbor[direction].cards_played:
+                    total_amount = int(amount_per)*len(self.neighbor[direction].cards_played[color])
+                else:
+                    total_amount = 0
 
-        return total_amount
+            return total_amount
+        except ValueError as e:
+            print ability
+            print e
+            sys.exit(1)
 
     def resolveCardAbilityENDOFGAME(self):
         for ability in self.resolve_ability_at_end:
