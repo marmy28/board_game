@@ -183,26 +183,27 @@ class Game(object):
             if turn != 5:
                 player_resolve.handCardsToNeighbor(self.card_direction[self.age_number])
 
-        for player_play_discard in self.player:
-            if player_play_discard.play_discard_pile:
-                player_play_discard.cards_CAN_play = self.discarded_pile
-                player_action, player_card = player_play_discard.decisionForTurn(check_hand=False)
+        if len(self.discarded_pile) > 0:
+            for player_play_discard in self.player:
+                if player_play_discard.play_discard_pile:
+                    player_play_discard.cards_CAN_play = self.discarded_pile
+                    player_action, player_card = player_play_discard.decisionForTurn(check_hand=False)
 
-                if player_action == "playCard":
-                    player_play_discard.playCard(player_card, self.age_number)
-                elif player_action == "discardCard":
-                    player_play_discard.discardCard(player_card)
-                elif player_action == "playWonder":
-                    player_play_discard.playWonder(player_card)
+                    if player_action == "playCard":
+                        player_play_discard.playCard(player_card, self.age_number)
+                    elif player_action == "discardCard":
+                        player_play_discard.discardCard(player_card)
+                    elif player_action == "playWonder":
+                        player_play_discard.playWonder(player_card)
 
-                if player_play_discard.discard_this_card is not None:
-                    self.discarded_pile.append(player_play_discard.discard_this_card)
-                    player_play_discard.discard_this_card = None
+                    if player_play_discard.discard_this_card is not None:
+                        self.discarded_pile.append(player_play_discard.discard_this_card)
+                        player_play_discard.discard_this_card = None
 
-                player_play_discard.resolveAbility()
-                player_play_discard.cards_CAN_play = []
-                player_play_discard.play_discard_pile = False
-                break
+                    player_play_discard.resolveAbility()
+                    player_play_discard.cards_CAN_play = []
+                    player_play_discard.play_discard_pile = False
+                    break
 
         if player_can_play_both != "":
             print "PLAYING BOTH", player_can_play_both
