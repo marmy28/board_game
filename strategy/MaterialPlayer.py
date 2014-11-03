@@ -196,7 +196,11 @@ class MaterialPlayer(Person):
                     card_points = int(card.ability)
                     card_cost = card.totalCost()
         else:
-            card_id = self.cards_CAN_play[0].id
+            try:
+                card_id = self.cards_CAN_play[0].id
+            except IndexError:
+                card_id = self.cards_CANNOT_play[0].id
+                self.my_player_action = "discardCard"
 
         self.my_player_card = self.findMatchingId(card_id)
 
