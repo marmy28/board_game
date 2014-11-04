@@ -36,20 +36,21 @@ class Game(object):
         self.card_direction = {1: 'left', 2: 'right', 3: 'left'}
         self.discarded_pile = []
         con = sqlite3.connect("database.db")
+        con.row_factory = sqlite3.Row
         with con:
             cur = con.cursor()
             a_or_b = ['a', 'b']
-            cur.execute("SELECT * FROM boards WHERE cSide IS ?", (a_or_b[random.randint(0, 1)],))
+            cur.execute("SELECT * FROM vBoards WHERE side IS ?", (a_or_b[random.randint(0, 1)],))
             boards = cur.fetchall()
             for board in boards:
                 self.boards.append(Board(board, cur))
             for keys, values in self.all_cards.items():
                 if keys == 'purple':
-                    cur.execute("SELECT * FROM cards WHERE cColor = 'purple'")
+                    cur.execute("SELECT * FROM vCards WHERE color = 'purple'")
                 else:
-                    cur.execute("SELECT * FROM cards WHERE nPlayers<=:numPlayers \
-                    AND nAge=:age  AND cColor IS NOT 'purple'", {'numPlayers': number_of_players,
-                                                                 'age': int(keys)})
+                    cur.execute("SELECT * FROM vCards WHERE number_of_players<=:numPlayers \
+                    AND age=:age  AND color IS NOT 'purple'", {'numPlayers': number_of_players,
+                                                               'age': int(keys)})
 
                 cards = cur.fetchall()
                 for card in cards:
@@ -234,17 +235,17 @@ class Game(object):
 
 class Card(object):
     def __init__(self, parameters):
-        self.id = parameters[0]
-        self.name = parameters[1]
-        self.color = parameters[2]
-        self.age = parameters[3]
-        self.number_of_players = parameters[4]
-        self.cost = {'coin': parameters[5], 'clay': parameters[6], 'ore': parameters[7]
-                     , 'stone': parameters[8], 'wood': parameters[9], 'glass': parameters[10]
-                     , 'loom': parameters[11], 'papyrus': parameters[12]}
-        self.free_from = parameters[13]
-        self.ability = parameters[14]
-        self.give_free = parameters[15]
+        self.id = parameters['id']
+        self.name = parameters['name']
+        self.color = parameters['color']
+        self.age = parameters['age']
+        self.number_of_players = parameters['number_of_players']
+        self.cost = {'coin': parameters['coin'], 'clay': parameters['clay'], 'ore': parameters['ore']
+                     , 'stone': parameters['stone'], 'wood': parameters['wood'], 'glass': parameters['glass']
+                     , 'loom': parameters['loom'], 'papyrus': parameters['papyrus']}
+        self.free_from = parameters['free_from']
+        self.ability = parameters['ability']
+        self.give_free = parameters['give_free']
         self.trading_cost = {'left': 0, 'right': 0}
 
     def makeFree(self):
@@ -261,17 +262,17 @@ class Card(object):
 
 class Board(object):
     def __init__(self, parameters, cur):
-        self.id = parameters[0]
-        self.name = parameters[1]
-        self.side = parameters[2]
+        self.id = parameters['id']
+        self.name = parameters['name']
+        self.side = parameters['side']
         self.material = {'coin': 0, 'clay': 0, 'ore': 0, 'stone': 0, 'wood': 0
                          , 'glass': 0, 'loom': 0, 'papyrus': 0}
         self.newMaterial('coin', 3)
-        self.newMaterial(parameters[3])
+        self.newMaterial(parameters['material'])
         self.split_material = {}
         self.wonders = []
 
-        cur.execute("SELECT * FROM wonders WHERE nBoardsId = ?", (str(self.id),))
+        cur.execute("SELECT * FROM vWonders WHERE nBoardsId = ?", (str(self.id),))
 
         wonder_cards = cur.fetchall()
         for wonder_card in wonder_cards:
@@ -291,12 +292,12 @@ class Board(object):
 
 class Wonder(object):
     def __init__(self, parameters):
-        self.name = str(parameters[0])
-        self.color = parameters[2].split(" & ")
-        self.cost = {'coin': parameters[4], 'clay': parameters[5], 'ore': parameters[6]
-                     , 'stone': parameters[7], 'wood': parameters[8], 'glass': parameters[9]
-                     , 'loom': parameters[10], 'papyrus': parameters[11]}
-        self.ability = parameters[-1].split(" & ")
+        self.name = str(parameters['name'])
+        self.color = parameters['color'].split(" & ")
+        self.cost = {'coin': parameters['coin'], 'clay': parameters['clay'], 'ore': parameters['ore']
+                     , 'stone': parameters['stone'], 'wood': parameters['wood'], 'glass': parameters['glass']
+                     , 'loom': parameters['loom'], 'papyrus': parameters['papyrus']}
+        self.ability = parameters['ability'].split(" & ")
         self.trading_cost = {'left': 0, 'right': 0}
 
     def resetTrade(self):
