@@ -42,6 +42,12 @@ class Person(object):
     def __ge__(self, other):
         return self.shield_count >= other.shield_count
 
+    def __eq__(self, other):
+        return self.shield_count == other.shield_count
+
+    def __ne__(self, other):
+        return self.shield_count != other.shield_count
+
     def changeOfStrategy(self):
         # look in change_class.py if need help. will need to change over all of init parameters
         # may make this a definition in generalfunctions.py
@@ -164,11 +170,7 @@ class Person(object):
 
         needed_materials = self.checkIfCanBuy(wonder_eval.cost)
 
-        if needed_materials == True:  # leave as == True because may return a dictionary
-            return True
-        elif needed_materials == False:  # leave as == False because may return a dictionary
-            return False
-        else:
+        if isinstance(needed_materials, dict):
             final_cost = {}
             if self.neighbor['right'].board.material['coin'] >= self.neighbor['left'].board.material['coin']:
                 look_right_then_left = False  # goes left then right
@@ -198,6 +200,8 @@ class Person(object):
 
             wonder_eval.trading_cost = GF.findCheapestTrade(final_cost)
             return True
+        else:
+            return needed_materials
 
     def canBuyCard(self, card_number):
         card_eval = self.cards_in_hand[card_number]
@@ -213,11 +217,11 @@ class Person(object):
 
         needed_materials = self.checkIfCanBuy(card_eval.cost)
 
-        if needed_materials == True:  # leave as == True because may return a dictionary
-            return True
-        elif needed_materials == False:  # leave as == False because may return a dictionary
-            return False
-        else:
+        # if needed_materials == True:  # leave as == True because may return a dictionary
+        #     return True
+        # elif needed_materials == False:  # leave as == False because may return a dictionary
+        #     return False
+        if isinstance(needed_materials, dict):
             final_cost = {}
             if self.neighbor['right'].board.material['coin'] >= self.neighbor['left'].board.material['coin']:
                 look_right_then_left = False  # goes left then right
@@ -247,6 +251,8 @@ class Person(object):
 
             card_eval.trading_cost = GF.findCheapestTrade(final_cost)
             return True
+        else:
+            return needed_materials
 
     def checkIfNameInCardsInHand(self, given_name):
         for keys, values in self.cards_played.items():

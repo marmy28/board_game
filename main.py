@@ -128,11 +128,11 @@ class Game(object):
                 print ''
                 print player.__class__.__name__
                 print ''
-                final_score.append((player.printScore(), player.name))
+                final_score.append((player.printScore(), player.name, player.__class__.__name__))
             print '\n\n'
             final_score = sorted(final_score, key=lambda tup: tup[0], reverse=True)
-            for score, name in final_score:
-                print name, score
+            for score, name, class_name in final_score:
+                print name, class_name, score
             sys.exit(0)  # TODO will put connection to end game here
 
     def goToNextAge(self):

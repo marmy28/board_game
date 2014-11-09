@@ -2,9 +2,10 @@
 #### Decorators #####
 #####################
 
+
 def makeSureArray(func):
     def checker(make_array, args):
-        if type(make_array) == dict:
+        if isinstance(make_array, dict):
             new_array = [make_array.copy()]
         else:
             new_array = make_array
@@ -24,23 +25,24 @@ def sortDict(func):
 #### Functions ######
 #####################
 
+
 def compareDicts(my_dict):
-    intCounter = 0
-    while intCounter < len(my_dict) - 1:
-        intCounter2 = intCounter + 1
-        while intCounter2 < len(my_dict):
-            if my_dict[intCounter].keys() == my_dict[intCounter2].keys() \
-                    and my_dict[intCounter].values() == my_dict[intCounter2].values():
-                my_dict.pop(intCounter2)
+    i = 0
+    while i < len(my_dict) - 1:
+        j = i + 1
+        while j < len(my_dict):
+            if my_dict[i].keys() == my_dict[j].keys() \
+                    and my_dict[i].values() == my_dict[j].values():
+                my_dict.pop(j)
             else:
-                intCounter2 += 1
-        intCounter += 1
+                j += 1
+        i += 1
 
 
-def whatMaterialColor(materialName):
-    if materialName in ("wood", "ore", "stone", "clay"):
+def whatMaterialColor(material_name):
+    if material_name in ("wood", "ore", "stone", "clay"):
         return "brown"
-    elif materialName in ("glass", "papyrus", "loom"):
+    elif material_name in ("glass", "papyrus", "loom"):
         return "gray"
     else:
         return "NA"
@@ -86,21 +88,20 @@ def buyWithSplit(cost_copy, split_mat):
 
 @sortDict
 def eraseMoreExpensive(card_cost):
-    # card_cost = sorted(card_cost, key=len)
-    intCounter = 0
-    while intCounter < len(card_cost) - 1:
-        intCounter2 = intCounter + 1
-        while intCounter2 < len(card_cost):
+    counter = 0
+    while counter < len(card_cost) - 1:
+        another_counter = counter + 1
+        while another_counter < len(card_cost):
             j = 0
-            for i in card_cost[intCounter].keys():
-                if i in card_cost[intCounter2]:
-                    if card_cost[intCounter][i] >= card_cost[intCounter2][i]:
+            for i in card_cost[counter].keys():
+                if i in card_cost[another_counter]:
+                    if card_cost[counter][i] >= card_cost[another_counter][i]:
                         j += 1
-            if j == len(card_cost[intCounter].keys()):
-                card_cost.pop(intCounter2)
+            if j == len(card_cost[counter].keys()):
+                card_cost.pop(another_counter)
             else:
-                intCounter2 += 1
-        intCounter += 1
+                another_counter += 1
+        counter += 1
     return card_cost
 
 
@@ -191,9 +192,9 @@ def expelExtraMaterial(coin_cost, materials):
 def findCheapestTrade(trading_cost):
     i = 0
     cheapest = trading_cost['right'][i] + trading_cost['left'][i]
-    cheapestDict = {'right': trading_cost['right'][i], 'left': trading_cost['left'][i]}
+    cheapest_dict = {'right': trading_cost['right'][i], 'left': trading_cost['left'][i]}
     while i < len(trading_cost['right']):
         if (trading_cost['right'][i] + trading_cost['left'][i]) < cheapest:
-            cheapestDict = {'right': trading_cost['right'][i], 'left': trading_cost['left'][i]}
+            cheapest_dict = {'right': trading_cost['right'][i], 'left': trading_cost['left'][i]}
         i += 1
-    return cheapestDict
+    return cheapest_dict
