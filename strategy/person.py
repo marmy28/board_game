@@ -1,10 +1,47 @@
+__author__ = "Matthew"
+
 import generalfunctions as GF
 import sys
 
 
 class Person(object):
+    """Inherited by all strategies. Person does all of the background calculations and tries to put them into easily
+    obtainable variables and functions.
+    """
 
     def __init__(self, name, the_board):
+        """Initializes variables. The following variables may be useful:
+        self.military_points_win - Total military win points.
+        self.military_points_loss - Total military loss points. This is a negative number.
+        self.shield_count - Shows how many shields you have.
+        self.use_free_card - If this is True and you are able to play for free then your card will be free.
+        self.free_card - Array of True/False telling you if you have a free card that age or not.
+        self.science - Dictionary of science options.
+        self.any_science - How many wildcard sciences you have.
+        self.any_material - The wildcard brown and grey is held here.
+        self.blue_points - How many blue points you have.
+        self.trade - 2d dictionary with direction then color telling how much coin each material costs to each side.
+
+        ----------------------------------------------------------------------------------------
+        self.board - Stored the name, side, wonders, etc. For more info look at the Board Class
+        self.can_afford_wonder - If True you can afford your next wonder.
+
+        ----------------------------------------------------------------------------------------
+        self.neighbor['right'] - Is your right neighbor's version of self.
+        self.neighbor['left'] - Same goes for left.
+        self.neighbor['me'] - And me as well.
+
+        ----------------------------------------------------------------------------------------
+        self.cards_played['color or wonder'] - Array of those color cards or how many wonders you have played.
+        self.cards_CAN_play - Cards you can afford.
+        self.cards_CANNOT_play - Cards in your hand that you cannot afford, even through trading.
+
+        ----------------------------------------------------------------------------------------
+
+        :type name: str
+        :type the_board: Board
+        :rtype: None
+        """
         self.name = name
         self.neighbor = {"right": None, "left": None, "me": self}
         self.board = the_board
@@ -31,29 +68,67 @@ class Person(object):
         self.use_free_card = False
 
     def __lt__(self, other):
+        """Used to look at military shield count.
+
+        :type other: Person
+        :rtype: bool
+        """
         return self.shield_count < other.shield_count
 
     def __le__(self, other):
+        """Used to compare military shield count.
+
+        :type other: Person
+        :rtype: bool
+        """
         return self.shield_count <= other.shield_count
 
     def __gt__(self, other):
+        """Used to compare military shield count.
+
+        :type other: Person
+        :rtype: bool
+        """
         return self.shield_count > other.shield_count
 
     def __ge__(self, other):
+        """Used to compare military shield count.
+
+        :type other: Person
+        :rtype: bool
+        """
         return self.shield_count >= other.shield_count
 
     def __eq__(self, other):
+        """Used to compare military shield count.
+
+        :type other: Person
+        :rtype: bool
+        """
         return self.shield_count == other.shield_count
 
     def __ne__(self, other):
+        """Used to compare military shield count.
+
+        :type other: Person
+        :rtype: bool
+        """
         return self.shield_count != other.shield_count
 
     def changeOfStrategy(self):
+        """Currently not set up. This function does nothing.
+
+        :rtype: None
+        """
         # look in change_class.py if need help. will need to change over all of init parameters
         # may make this a definition in generalfunctions.py
         pass  # TODO change of strategy!
 
     def highestScienceValue(self):
+        """Finds the highest science value with the science wildcards added in.
+
+        :rtype: int
+        """
         if self.any_science == 0:
             return GF.getScienceScore(self.science)
         elif self.any_science == 1:
@@ -73,9 +148,18 @@ class Person(object):
             return max(GF.getScienceScore(a), GF.getScienceScore(b), GF.getScienceScore(c))
 
     def addToScience(self, ability):
+        """Adds 1 to the corresponding science symbol in self.science.
+
+        :type ability: str
+        :rtype: None
+        """
         self.science[ability] += 1
 
     def addToMaterials(self, ability):
+        """Adds new materials. This would be from brown or gray cards.
+
+        :rtype: None
+        """
         if "/" in ability:
             self.board.newSplitMaterial(ability)
         elif len(ability.split()) == 2:
@@ -84,9 +168,17 @@ class Person(object):
             self.board.newMaterial(ability)
 
     def addToMilitary(self, ability):
+        """Adds to shield count.
+
+        :rtype: None
+        """
         self.shield_count += int(ability.split()[0])
 
     def addToBlue(self, ability):
+        """Adds to your blue points.
+
+        :rtype: None
+        """
         self.blue_points += int(ability)
 
     def addToTrading(self, all_ability, age):
@@ -217,10 +309,6 @@ class Person(object):
 
         needed_materials = self.checkIfCanBuy(card_eval.cost)
 
-        # if needed_materials == True:  # leave as == True because may return a dictionary
-        #     return True
-        # elif needed_materials == False:  # leave as == False because may return a dictionary
-        #     return False
         if isinstance(needed_materials, dict):
             final_cost = {}
             if self.neighbor['right'].board.material['coin'] >= self.neighbor['left'].board.material['coin']:
