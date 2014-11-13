@@ -11,6 +11,7 @@ class Person(object):
 
     def __init__(self, name, the_board):
         """Initializes variables. The following variables may be useful:
+        ----------------------------------------------------------------------------------------
         self.military_points_win - Total military win points.
         self.military_points_loss - Total military loss points. This is a negative number.
         self.shield_count - Shows how many shields you have.
@@ -21,24 +22,22 @@ class Person(object):
         self.any_material - The wildcard brown and grey is held here.
         self.blue_points - How many blue points you have.
         self.trade - 2d dictionary with direction then color telling how much coin each material costs to each side.
-
         ----------------------------------------------------------------------------------------
         self.board - Stored the name, side, wonders, etc. For more info look at the Board Class
         self.can_afford_wonder - If True you can afford your next wonder.
-
         ----------------------------------------------------------------------------------------
         self.neighbor['right'] - Is your right neighbor's version of self.
         self.neighbor['left'] - Same goes for left.
         self.neighbor['me'] - And me as well.
-
         ----------------------------------------------------------------------------------------
         self.cards_played['color or wonder'] - Array of those color cards or how many wonders you have played.
         self.cards_CAN_play - Cards you can afford.
         self.cards_CANNOT_play - Cards in your hand that you cannot afford, even through trading.
-
         ----------------------------------------------------------------------------------------
 
+        :param name: Name of player.
         :type name: str
+        :param the_board: The board you are given.
         :type the_board: Board
         :rtype: None
         """
@@ -150,6 +149,7 @@ class Person(object):
     def addToScience(self, ability):
         """Adds 1 to the corresponding science symbol in self.science.
 
+        :param ability: Either tablet, wheel, or compass.
         :type ability: str
         :rtype: None
         """
@@ -158,6 +158,8 @@ class Person(object):
     def addToMaterials(self, ability):
         """Adds new materials. This would be from brown or gray cards.
 
+        :param ability: Name of the material and possibly how many.
+        :type ability: str
         :rtype: None
         """
         if "/" in ability:
@@ -168,20 +170,32 @@ class Person(object):
             self.board.newMaterial(ability)
 
     def addToMilitary(self, ability):
-        """Adds to shield count.
+        """Adds to self.shield_count.
 
+        :param ability: Number of shields to add.
+        :type ability: str
         :rtype: None
         """
         self.shield_count += int(ability.split()[0])
 
     def addToBlue(self, ability):
-        """Adds to your blue points.
+        """Adds to your self.blue_points.
 
+        :param ability: Number of points to add.
+        :type ability: str
         :rtype: None
         """
         self.blue_points += int(ability)
 
     def addToTrading(self, all_ability, age):
+        """Adds to your trading or material. From yellow cards.
+
+        :param all_ability: Card or wonder's ability.
+        :type all_ability: str
+        :param age: The age of the card. For wonders use age 4.
+        :type age: int
+        :rtype: None
+        """
         for ability in all_ability.split(" & "):
             if age == 1:
                 if ability.split()[1] == "coin":
@@ -218,6 +232,12 @@ class Person(object):
                 pass
 
     def addToGuilds(self, all_ability):
+        """Adds to your resolve at end or any science. Purple cards.
+
+        :param all_ability: Ability of the card.
+        :type all_ability: str
+        :rtype: None
+        """
         for ability in all_ability.split(" & "):
             if "/" in ability:
                 self.any_science += 1
@@ -225,6 +245,12 @@ class Person(object):
                 self.resolve_ability_at_end.append(ability)
 
     def addToSpecial(self, ability):
+        """Very specific abilities come here. They are from color \"NA\".
+
+        :param ability: Ability of the wonder.
+        :type ability: str
+        :rtype: None
+        """
         if ability == "play both cards at end":
             self.play_both_cards_at_end = True
         elif ability == "guild either":
@@ -237,6 +263,11 @@ class Person(object):
             pass
 
     def checkCardsInHand(self):
+        """Moves cards from cards_in_hand to either cards_CAN_play or cards_CANNOT_play. This uses the function
+        self.canBuyCard(i).
+
+        :rtype: None
+        """
         i = 0
         self.cards_CAN_play = []
         self.cards_CANNOT_play = []
@@ -252,9 +283,17 @@ class Person(object):
         self.cards_in_hand = []
 
     def checkNextWonder(self):
+        """Uses the function self.canBuyWonder() and sets the self.can_afford_wonder to either True or False.
+
+        :rtype: None
+        """
         self.can_afford_wonder = self.canBuyWonder()
 
     def canBuyWonder(self):
+        """First checks if any wonders are left, then figures out if you are able to afford the next wonder.
+
+        :rtype: bool
+        """
         if len(self.board.wonders) == 0:
             return False
         wonder_eval = self.board.wonders[0]
@@ -263,7 +302,7 @@ class Person(object):
         needed_materials = self.checkIfCanBuy(wonder_eval.cost)
 
         if isinstance(needed_materials, dict):
-            final_cost = {}
+            final_cost = {}  # TODO: make check for trading cost too
             if self.neighbor['right'].board.material['coin'] >= self.neighbor['left'].board.material['coin']:
                 look_right_then_left = False  # goes left then right
             else:
@@ -296,6 +335,13 @@ class Person(object):
             return needed_materials
 
     def canBuyCard(self, card_number):
+        """Checks if you are able to buy the card using your own materials and trading with neighbors. This is able
+        to look at split materials as well.
+
+        :param card_number: Card number that is being evaluated.
+        :type card_number: int
+        :rtype: bool
+        """
         card_eval = self.cards_in_hand[card_number]
 
         already_have = self.checkIfNameInCardsInHand(card_eval.name)
@@ -310,7 +356,7 @@ class Person(object):
         needed_materials = self.checkIfCanBuy(card_eval.cost)
 
         if isinstance(needed_materials, dict):
-            final_cost = {}
+            final_cost = {}  # TODO: make check for trading cost too
             if self.neighbor['right'].board.material['coin'] >= self.neighbor['left'].board.material['coin']:
                 look_right_then_left = False  # goes left then right
             else:
@@ -343,6 +389,12 @@ class Person(object):
             return needed_materials
 
     def checkIfNameInCardsInHand(self, given_name):
+        """Goes through the cards you have played to see if the name given is present.
+
+        :param given_name: Name that is checked for in self.cards_played.
+        :type given_name: str
+        :rtype: bool
+        """
         for keys, values in self.cards_played.items():
             i = 0
             while i < len(values):
@@ -357,6 +409,12 @@ class Person(object):
         return False
 
     def checkIfCanBuy(self, card_cost):
+        """Checks if you are able to afford the cost given based on your own materials.
+
+        :param card_cost: Cost of the card or wonder.
+        :type card_cost: dict
+        :rtype: bool | list[dict]
+        """
         need_and_have_materials = {key: self.board.material[key] - card_cost.get(key, 0)
                                    for key in self.board.material.keys()}
         needs_materials = {}
@@ -382,14 +440,25 @@ class Person(object):
         return final_cost
 
     def printMaterials(self):
+        """Prints your materials and split materials.
+
+        :rtype: None
+        """
         print '\nMaterials\n----------'
         for keys, values in self.board.material.items():
             print values, keys
         if len(self.board.split_material) != 0:
             for keys1, value1 in self.board.split_material.items():
                 print '1', value1.keys()[0], '/', value1.keys()[1]
+        if len(self.any_material) != 0:
+            for keys, values in self.any_material.items():
+                print '1', values.keys()
 
     def printName(self):
+        """Prints your name, your neighbor's name and how much to trade.
+
+        :rtype: None
+        """
         print '\nName\n----------'
         for keys, values in self.neighbor.items():
             print ' ', keys, '=', values.name, values.board.name
@@ -399,6 +468,11 @@ class Person(object):
                 print ''
 
     def printCardsInHand(self):
+        """Prints whether or not you can afford your wonder. Prints your wonders. Prints the cards in your hand
+        you can afford. Prints a new line. Prints the cards in your hand you cannot afford.
+
+        :rtype: None
+        """
         if self.can_afford_wonder:
             print 'Can afford wonder'
         else:
@@ -414,6 +488,10 @@ class Person(object):
                 '-->', self.cards_CANNOT_play[i].ability
 
     def printPlayedCards(self):
+        """Prints the cards you have played. This is grouped by the key (color or wonder).
+
+        :rtype: None
+        """
         for color, cards in self.cards_played.items():
             print color
             print '----------'
@@ -422,6 +500,10 @@ class Person(object):
             print ''
 
     def printWonders(self):
+        """Prints your board and the wonders you have left to buy.
+
+        :rtype: None
+        """
         print self.board.name
         print self.board.side
         for wonder in self.board.wonders:
@@ -432,6 +514,10 @@ class Person(object):
             print ''
 
     def printMisc(self):
+        """Prints your shield count, military wins, military loses, blue points, and science.
+
+        :rtype: None
+        """
         print '\nExtra\n----------'
         print self.shield_count, 'shield(s)'
         print self.military_points_win, 'military win'
@@ -440,11 +526,12 @@ class Person(object):
         print self.any_science, 'any science'
         for keys, values in self.science.items():
             print values, keys
-        if len(self.any_material) != 0:
-            for keys, values in self.any_material.items():
-                print '1', values.keys()
 
     def printCharacter(self):
+        """Prints your name, materials, played cards, etc.
+
+        :rtype: None
+        """
         self.printName()
         self.printMisc()
         self.printMaterials()
@@ -452,6 +539,10 @@ class Person(object):
         self.printPlayedCards()
 
     def printScore(self):
+        """Only used at the end of the game. It resolves all the abilities and prints out each section of points.
+
+        :rtype: int
+        """
         self.resolveCardAbilityENDOFGAME()
         total = (self.military_points_win + self.military_points_loss + self.blue_points
                  + self.highestScienceValue() + (self.board.material['coin']/3))
@@ -465,6 +556,17 @@ class Person(object):
         return total
 
     def playCard(self, card_to_play, age):
+        """Used to play a card. Checks if the card is in self.cards_CAN_play. If not it checks if you have a free
+        card this age. If not it sends it to self.discardCard(card_to_discard). If you can play the card it adds
+        it to your cards played and pays your neighbors and the bank based on trade and coin.
+
+        :param card_to_play: Index of which card you want to play. Should be between ``0`` and
+        ``len(self.cards_CAN_play) - 1``.
+        :type card_to_play: int
+        :param age: Age this card is played in.
+        :type age: int
+        :rtype: None
+        """
         try:
             self.play_this_card = self.cards_CAN_play.pop(card_to_play)
             if self.free_card[age-1] and self.use_free_card:
@@ -491,6 +593,13 @@ class Person(object):
                 self.neighbor[direction].board.newMaterial(u'coin', abs(coin_cost))
 
     def discardCard(self, card_to_discard):
+        """Adds the card to the discard pile, makes the card free for future use, and gives you 3 coins.
+
+        :param card_to_discard: Index of card you want to discard. Can be between ``0`` and
+        ``len(self.card_CAN_play) + len(self.card_CANNOT_play) - 1``.
+        :type card_to_discard: int
+        :rtype: None
+        """
         try:
             self.discard_this_card = self.cards_CAN_play.pop(card_to_discard)
         except IndexError:
@@ -511,6 +620,15 @@ class Person(object):
         self.play_this_card = None
 
     def playWonder(self, card_construction_marker):
+        """Checks if you can play wonder. If not it sends to self.discardCard(card_to_discard). If you can, it adds
+        the wonder to cards played and removes the card from the game. If you play the wonder with the ability to play
+        both cards at the end, self.play_both_cards_at_end is set to True immediately.
+
+        :param card_construction_marker: Index of card you want to use to construct your wonder. Can be between ``0``
+        and ``len(self.card_CAN_play) + len(self.card_CANNOT_play) - 1``.
+        :type card_construction_marker: int
+        :rtype: None
+        """
         if self.can_afford_wonder:
             try:
                 self.cards_CAN_play.pop(card_construction_marker)
@@ -544,6 +662,10 @@ class Person(object):
             self.discardCard(card_construction_marker)
 
     def resolveAbility(self):
+        """Resolves the ability of the card or wonder just played.
+
+        :rtype: None
+        """
         if self.played_wonder:
             self.resolveWonderAbility()
             self.played_wonder = False
@@ -553,6 +675,11 @@ class Person(object):
             pass
 
     def resolveWonderAbility(self):
+        """Cycles through the colors and sends it to the function that is used for that color. Finally it removes the
+        wonder from its list.
+
+        :rtype: None
+        """
         i = 0
         while i < len(self.board.wonders[0].color):
             if self.board.wonders[0].color[i] == "blue":
@@ -569,6 +696,10 @@ class Person(object):
         self.board.wonders.pop(0)
 
     def resolveCardAbility(self):
+        """Cycles through the colors and sends it to the function that is used for that color.
+
+        :rtype: None
+        """
         if self.play_this_card.color == 'brown' or self.play_this_card.color == 'gray':
             self.addToMaterials(self.play_this_card.ability)
         elif self.play_this_card.color == 'blue':
@@ -584,6 +715,12 @@ class Person(object):
         self.play_this_card = None
 
     def pointsForEndCard(self, ability):
+        """Returns the amount of points an ability that needs to be resolved at the end of the game would give you.
+
+        :param ability: Ability that is counted at the end of the game.
+        :type ability: str
+        :rtype: int
+        """
         if "loses" in ability:
             total_amount = abs(self.neighbor[ability.split()[-1]].military_points_loss)
         else:
@@ -596,6 +733,10 @@ class Person(object):
         return total_amount
 
     def resolveCardAbilityENDOFGAME(self):
+        """Takes the abilities in self.resolve_ability_at_end and adds the points into self.blue_points.
+
+        :rtype: None
+        """
         for ability in self.resolve_ability_at_end:
             if ability == "guild either":
                 max_points = 0
@@ -618,6 +759,12 @@ class Person(object):
                 self.blue_points += self.pointsForEndCard(ability)
 
     def handCardsToNeighbor(self, direction):
+        """Resets the cards left in your hand and gives to the neighbor that is in the direction given.
+
+        :param direction: Either ``\"right\"`` or ``\"left\"``.
+        :type direction: str
+        :rtype: None
+        """
         self.neighbor[direction].cards_in_hand = []
         for card in self.cards_CAN_play:
             card.trading_cost = {'left': 0, 'right': 0}
