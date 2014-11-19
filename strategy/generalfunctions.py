@@ -81,7 +81,7 @@ def buyWithSplit(cost_copy, split_mat):
                 if v >= 0:
                     option.pop(k)
 
-            if len(option) == 0:
+            if not option:
                 return True
 
     return cost_copy
@@ -181,7 +181,7 @@ def buyWithSplitTrade(cost, split_mat, trade_cost, coin_array, side):
 def expelExtraMaterial(coin_cost, materials):
     i = 0
     while i < len(materials):
-        if len(materials[i]) != 0:
+        if materials[i]:
             materials.pop(i)
             coin_cost['right'].pop(i)
             coin_cost['left'].pop(i)

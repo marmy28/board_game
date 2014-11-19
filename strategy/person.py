@@ -55,6 +55,7 @@ class Person(object):
         self.science = {"tablet": 0, "wheel": 0, "compass": 0}
         self.any_science = 0
         self.blue_points = 0
+        self.end_of_game_points = 0
         self.any_material = {}
         self.play_this_card = None
         self.discard_this_card = None
@@ -314,11 +315,11 @@ class Person(object):
 
             GF.exterminateTooExpensiveOrGray(final_cost, wonder_eval.cost['coin'], needed_materials
                                              , self.board.material['coin'])
-            if len(needed_materials) == 0:
+            if not needed_materials:
                 return False
 
             for side in sorted(self.trade.keys(), reverse=look_right_then_left):
-                if len(self.neighbor[side].board.split_material):
+                if self.neighbor[side].board.split_material:
                     GF.buyWithSplitTrade(needed_materials, self.neighbor[side].board.split_material
                                          , self.trade[side], final_cost, side)
 
@@ -326,7 +327,7 @@ class Person(object):
                                              , self.board.material['coin'], check_gray=False)
             GF.expelExtraMaterial(final_cost, needed_materials)
 
-            if len(needed_materials) == 0:
+            if not needed_materials:
                 return False
 
             wonder_eval.trading_cost = GF.findCheapestTrade(final_cost)
@@ -348,7 +349,7 @@ class Person(object):
         if already_have:
             return False
 
-        if card_eval.free_from != 'FALSE':
+        if card_eval.free_from:
             is_free = self.checkIfNameInCardsInHand(card_eval.free_from)
             if is_free:
                 return True
@@ -368,7 +369,7 @@ class Person(object):
 
             GF.exterminateTooExpensiveOrGray(final_cost, card_eval.cost['coin'], needed_materials
                                              , self.board.material['coin'])
-            if len(needed_materials) == 0:
+            if not needed_materials:
                 return False
 
             for side in sorted(self.trade.keys(), reverse=look_right_then_left):
@@ -423,18 +424,18 @@ class Person(object):
                 needs_materials[keys] = values
             elif values < 0 and keys == 'coin':
                 return False
-        if len(needs_materials) == 0:
+        if not needs_materials:
             return True
-        if len(self.board.split_material) != 0:
+        if self.board.split_material:
             next_cost = GF.buyWithSplit(needs_materials, self.board.split_material)
-            if next_cost == True:
+            if next_cost and not isinstance(next_cost, list):
                 return True
         else:
             next_cost = [needs_materials]
 
         GF.compareDicts(next_cost)
         final_cost = GF.buyWithSplit(next_cost, self.any_material)
-        if final_cost != True:
+        if isinstance(final_cost, list):
             GF.compareDicts(final_cost)
             final_cost = GF.eraseMoreExpensive(final_cost)
         return final_cost
@@ -447,10 +448,10 @@ class Person(object):
         print '\nMaterials\n----------'
         for keys, values in self.board.material.items():
             print values, keys
-        if len(self.board.split_material) != 0:
+        if self.board.split_material:
             for keys1, value1 in self.board.split_material.items():
                 print '1', value1.keys()[0], '/', value1.keys()[1]
-        if len(self.any_material) != 0:
+        if self.any_material:
             for keys, values in self.any_material.items():
                 print '1', values.keys()
 
@@ -545,12 +546,13 @@ class Person(object):
         """
         self.resolveCardAbilityENDOFGAME()
         total = (self.military_points_win + self.military_points_loss + self.blue_points
-                 + self.highestScienceValue() + (self.board.material['coin']/3))
+                 + self.highestScienceValue() + (self.board.material['coin']/3) + self.end_of_game_points)
         print 'Military wins', self.military_points_win
         print 'Military losses', self.military_points_loss
-        print 'Blue + Other points', self.blue_points
+        print 'Blue points', self.blue_points
         print 'Science points', self.highestScienceValue()
         print 'Coin points', (self.board.material['coin']/3)
+        print 'EOG points', self.end_of_game_points
         print '-----'
         print 'Total', total
         return total
@@ -754,9 +756,9 @@ class Person(object):
                                 card_points -= self.highestScienceValue()
                             if card_points > max_points:
                                 max_points = card_points
-                self.blue_points += max_points
+                self.end_of_game_points += max_points
             else:
-                self.blue_points += self.pointsForEndCard(ability)
+                self.end_of_game_points += self.pointsForEndCard(ability)
 
     def handCardsToNeighbor(self, direction):
         """Resets the cards left in your hand and gives to the neighbor that is in the direction given.

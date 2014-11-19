@@ -1,9 +1,12 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 __author__ = 'matthew'
 
 ##############
 # IMPORTS
 ##############
 import sqlite3
+#import MySQLdb as mdb
 import sys
 import random
 import strategy
@@ -37,8 +40,10 @@ class Game(object):
         self.discarded_pile = []
         con = sqlite3.connect("database.db")
         con.row_factory = sqlite3.Row
+        # con = mdb.connect("localhost", "UserName", "UserPassword", "TableName")
+
         with con:
-            cur = con.cursor()
+            cur = con.cursor()  # mdb.cursors.DictCursor)
             a_or_b = ['a', 'b']
             cur.execute("SELECT * FROM vBoards WHERE side IS ?", (a_or_b[random.randint(0, 1)],))
             boards = cur.fetchall()
@@ -72,8 +77,9 @@ class Game(object):
         random.shuffle(self.all_cards[3])
         self.all_cards.pop('purple')
         while len(self.boards) != num_players:
-            self.player_name.pop()
             self.boards.pop()
+        while len(self.player_name) != num_players:
+            self.player_name.pop()
 
     def assignBoardsAndNeighbors(self, just_computer):
         i = 0
@@ -123,7 +129,6 @@ class Game(object):
             print 'GAME OVER!'
             final_score = []
             for player in self.player:
-                # player.printCharacter()
                 player.printName()
                 print ''
                 print player.__class__.__name__
@@ -184,7 +189,7 @@ class Game(object):
             if turn != 5:
                 player_resolve.handCardsToNeighbor(self.card_direction[self.age_number])
 
-        if len(self.discarded_pile) > 0:
+        if self.discarded_pile:
             for player_play_discard in self.player:
                 if player_play_discard.play_discard_pile:
                     player_play_discard.cards_CAN_play = self.discarded_pile
@@ -210,7 +215,7 @@ class Game(object):
             print "PLAYING BOTH", player_can_play_both
             for player_decision in self.player:
                 if player_decision.name == player_can_play_both:
-                    if len(player_decision.cards_CAN_play) == 1:
+                    if player_decision.cards_CAN_play:
                         player_decision.cards_in_hand = player_decision.cards_CAN_play
                     else:
                         player_decision.cards_in_hand = player_decision.cards_CANNOT_play
