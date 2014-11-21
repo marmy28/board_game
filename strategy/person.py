@@ -21,6 +21,7 @@ class Person(object):
         self.any_science - How many wildcard sciences you have.
         self.any_material - The wildcard brown and grey is held here.
         self.blue_points - How many blue points you have.
+        self.end_of_game_points - Will be zero until the end.
         self.trade - 2d dictionary with direction then color telling how much coin each material costs to each side.
         ----------------------------------------------------------------------------------------
         self.board - Stored the name, side, wonders, etc. For more info look at the Board Class
@@ -373,7 +374,7 @@ class Person(object):
                 return False
 
             for side in sorted(self.trade.keys(), reverse=look_right_then_left):
-                if len(self.neighbor[side].board.split_material):
+                if self.neighbor[side].board.split_material:
                     GF.buyWithSplitTrade(needed_materials, self.neighbor[side].board.split_material
                                          , self.trade[side], final_cost, side)
 
@@ -381,7 +382,7 @@ class Person(object):
                                              , self.board.material['coin'], check_gray=False)
             GF.expelExtraMaterial(final_cost, needed_materials)
 
-            if len(needed_materials) == 0:
+            if not needed_materials:
                 return False
 
             card_eval.trading_cost = GF.findCheapestTrade(final_cost)

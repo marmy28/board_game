@@ -18,8 +18,21 @@ import inspect
 ##############
 
 class Game(object):
+    """Main class that uses the different strategies and dictates the game flow.
+    """
 
     def __init__(self, number_of_players, difficulty_level, just_computer):
+        """Initializes players and their boards. Fetches all the information from the database before
+        closing it.
+
+        :param number_of_players: Total number of players, including yourself.
+        :type number_of_players: int
+        :param difficulty_level: Right now only a 1 or 2, where 2 is more difficult.
+        :type difficulty_level: int
+        :param just_computer: True if debugging but should be False for you.
+        :type just_computer: bool
+        :rtype: None
+        """
 
         self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Katie', 'Jon']
         self.player_strategy = []
@@ -65,6 +78,13 @@ class Game(object):
         self.assignBoardsAndNeighbors(just_computer)
 
     def shuffleCardsBoardsPlayers(self, num_players):
+        """Shuffles the cards, boards, and players. Gets the age III cards in order and gets rid of
+        the boards and players not being used.
+
+        :param num_players: Number of players, including yourself.
+        :type num_players: int
+        :rtype: None
+        """
         random.shuffle(self.player_name)
         random.shuffle(self.boards)
         random.shuffle(self.all_cards[1])
@@ -82,6 +102,12 @@ class Game(object):
             self.player_name.pop()
 
     def assignBoardsAndNeighbors(self, just_computer):
+        """Assigns the neighbors and the randomly chosen strategy for each person.
+
+        :param just_computer: True when debugging, but should be False for an actual game.
+        :type just_computer: bool
+        :rtype: None
+        """
         i = 0
         if just_computer:
             len_name = len(self.player_name)
@@ -111,6 +137,10 @@ class Game(object):
             i += 1
 
     def handOutCards(self):
+        """Hands out the cards before each age. This function also prints the scores at the end of the game.
+
+        :rtype: None
+        """
         self.age_number += 1
         if self.age_number <= 3:
             i = 0
@@ -141,6 +171,10 @@ class Game(object):
             sys.exit(0)  # TODO will put connection to end game here
 
     def goToNextAge(self):
+        """Compares the militaries and gives points accordingly. Finally it goes to self.handOutCards()
+
+        :rtype: None
+        """
         military_gain = (2*self.age_number - 1)
         if military_gain > 0:
             for player_military in self.player:
@@ -160,6 +194,14 @@ class Game(object):
         self.handOutCards()
 
     def aGameTurn(self, turn):
+        """Loops through each player and has the player either play a card, wonder, or discard
+        according to their choice. This is also where the discard pile obtains cards. If a player
+        can look at the discard pile or play both cards at the end they do so here.
+
+        :param turn: The turn of the age.
+        :type turn: int
+        :rtype: None
+        """
         player_can_play_both = ""
         for player_decision in self.player:
             player_action, player_card = player_decision.decisionForTurn()
@@ -239,7 +281,15 @@ class Game(object):
 
 
 class Card(object):
+    """Class for Cards.
+    """
     def __init__(self, parameters):
+        """Initializes the card variables like name, color, ability, etc.
+
+        :param parameters: List that comes from the database full on information.
+        :type parameters: dict | tuple
+        :rtype: None
+        """
         self.id = parameters['id']
         self.name = parameters['name']
         self.color = parameters['color']
@@ -254,19 +304,39 @@ class Card(object):
         self.trading_cost = {'left': 0, 'right': 0}
 
     def makeFree(self):
+        """Makes the card free by setting the cost and trading cost to zero.
+
+        :rtype: None
+        """
         self.cost = {'coin': 0, 'clay': 0, 'ore': 0, 'stone': 0, 'wood': 0, 'glass': 0, 'loom': 0
                      , 'papyrus': 0}
         self.trading_cost = {'left': 0, 'right': 0}
 
     def totalCost(self):
+        """Calculates the total coin cost of the card, including trading.
+
+        :rtype: int
+        """
         return self.cost['coin'] + self.trading_cost['left'] + self.trading_cost['right']
 
     def isFree(self):
+        """Tells you whether or not the coin cost is zero.
+
+        :rtype: bool
+        """
         return self.totalCost() == 0
 
 
 class Board(object):
     def __init__(self, parameters, cur):
+        """Initializes the Board class. Sets the parameters such as name, side, etc. This class contains
+        Wonders, your materials, and your split materials.
+
+        :param parameters: Information that comes from the database about the board.
+        :type parameters: dict | tuple
+        :param cur: Connection to database so the wonders correspond to the correct board.
+        :type cur: sqlite3.Cursor
+        """
         self.id = parameters['id']
         self.name = parameters['name']
         self.side = parameters['side']
@@ -284,12 +354,28 @@ class Board(object):
             self.wonders.append(Wonder(wonder_card))
 
     def newMaterial(self, material_name, number_to_change=1):
+        """Records the new material for you.
+
+        :param material_name: Name of the material you are changing. Should be a key from self.material.
+        :type material_name: str | unicode
+        :param number_to_change: How many of that material you are giving (negative number)
+        or receiving (positive number).
+        :type number_to_change: int
+        :rtype: None
+        """
         if (self.material[material_name] + number_to_change) >= 0:
             self.material[material_name] += number_to_change
         else:
             print 'Cannot do this transaction: insufficient funds'
 
     def newSplitMaterial(self, ability):
+        """Adds to your split materials which is different than your normal materials since you can
+        only use one or the other.
+
+        :param ability: name of two materials. Ex. stone/wood.
+        :type ability: str
+        :rtype: None
+        """
         i = len(self.split_material)
         material = ability.split("/")
         self.split_material[i] = {material[0]: 1, material[1]: 1}
@@ -297,6 +383,12 @@ class Board(object):
 
 class Wonder(object):
     def __init__(self, parameters):
+        """Initializes the wonders for your specific board. Very similar to Card(object).
+
+        :param parameters: Information about the specific wonder from the database.
+        :type parameters: dict | tuple
+        :rtype: None
+        """
         self.name = str(parameters['name'])
         self.color = parameters['color'].split(" & ")
         self.cost = {'coin': parameters['coin'], 'clay': parameters['clay'], 'ore': parameters['ore']
@@ -306,9 +398,17 @@ class Wonder(object):
         self.trading_cost = {'left': 0, 'right': 0}
 
     def resetTrade(self):
+        """Sets the coin amount for trading back to zero for each side.
+
+        :rtype: None
+        """
         self.trading_cost = {'left': 0, 'right': 0}
 
     def wonderTotalCost(self):
+        """The total cost of the wonder, including trading.
+
+        :rtype: int
+        """
         return self.trading_cost['left'] + self.trading_cost['right'] + self.cost['coin']
 
 ##############
