@@ -6,7 +6,6 @@ __author__ = 'matthew'
 # IMPORTS
 ##############
 import sqlite3
-#import MySQLdb as mdb
 import sys
 import random
 import strategy
@@ -55,10 +54,9 @@ class Game(object):
         self.discarded_pile = []
         con = sqlite3.connect("database.db")
         con.row_factory = sqlite3.Row
-        # con = mdb.connect("localhost", "UserName", "UserPassword", "TableName")
 
         with con:
-            cur = con.cursor()  # mdb.cursors.DictCursor)
+            cur = con.cursor()
             a_or_b = ['a', 'b']
             cur.execute("SELECT * FROM vBoards WHERE side IS ?", (a_or_b[random.randint(0, 1)],))
             boards = cur.fetchall()
