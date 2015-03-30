@@ -591,12 +591,12 @@ class Person(object):
             self.discard_this_card = None
             coin_cost = -1 * self.play_this_card.cost['coin']
             self.board.newMaterial(u'coin', coin_cost)
-            print self.name, "pays", abs(coin_cost), "to the bank"
+            # print self.name, "pays", abs(coin_cost), "to the bank"
             for direction, amount in self.play_this_card.trading_cost.items():
                 coin_cost = -1 * amount
                 self.board.newMaterial(u'coin', coin_cost)
                 self.neighbor[direction].board.newMaterial(u'coin', abs(coin_cost))
-                print self.name, "trades", abs(coin_cost), "coins to", self.neighbor[direction].name
+                # print self.name, "trades", abs(coin_cost), "coins to", self.neighbor[direction].name
 
     def discardCard(self, card_to_discard):
         """Adds the card to the discard pile, makes the card free for future use, and gives you 3 coins.

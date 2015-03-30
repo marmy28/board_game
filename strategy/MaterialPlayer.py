@@ -1,9 +1,10 @@
 from person import Person
 import random
+import sys
 
 
 class MaterialPlayer(Person):
-    difficulty = 2
+    difficulty = 3
 
     def __init__(self, name, the_board):
         super(MaterialPlayer, self).__init__(name, the_board)
@@ -61,7 +62,7 @@ class MaterialPlayer(Person):
             self.checkCardsInHand()  # keep inside this if statement so it will not be called when playing discard pile
 
         self.play_wonder = False
-        if len(self.board.wonders) > 0:
+        if self.board.wonders:
             if not (self.can_afford_wonder and self.board.wonders[0].wonderTotalCost() == 0):
                 self.checkNextWonder()  # this checks if your wonder is available
             if self.can_afford_wonder and self.board.wonders[0].wonderTotalCost() == 0:
@@ -74,6 +75,12 @@ class MaterialPlayer(Person):
             else:
                 self.my_player_action = "playWonder"
                 self.burnCard()
+        if self.my_player_card >= (len(self.cards_CAN_play) + len(self.cards_CANNOT_play)):
+            print "Material Player wants to play", self.my_player_card
+            print self.cards_CAN_play
+            print self.cards_CANNOT_play
+            print "FATAL ERROR"
+            sys.exit(1)
         return self.my_player_action, self.my_player_card
         # the player_action can be: playCard, discardCard, or playWonder
         # the player_card is the card you either want to play, discard, or use to build the wonder
@@ -134,7 +141,7 @@ class MaterialPlayer(Person):
             elif card.give_free:
                 give_free_cards.append(card)
 
-        if len(material_cards) > 0:
+        if material_cards:
             for card in material_cards:
                 if "/" in card.ability:
                     self.my_player_card = self.findMatchingId(card.id)
@@ -144,7 +151,7 @@ class MaterialPlayer(Person):
                     break
                 else:
                     self.my_player_card = self.findMatchingId(card.id)
-        elif len(give_free_cards) > 0:
+        elif give_free_cards:
             for card in give_free_cards:
                 if card.color == "yellow":
                     self.my_player_card = self.findMatchingId(card.id)
@@ -229,11 +236,9 @@ class MaterialPlayer(Person):
                     cheapest_military = card
                     cheapest_cost = card.totalCost()
 
-            if len(slim_military) == 0:
+            if not slim_military:
                 self.my_player_card = self.findMatchingId(cheapest_military.id)
-            elif len(slim_military) == 1:
-                self.my_player_card = self.findMatchingId(slim_military[0].id)
-            elif len(slimmer_military) > 0:
+            elif slimmer_military:
                 self.my_player_card = self.findMatchingId(slimmer_military[0].id)
             else:
                 random.shuffle(slim_military)
@@ -246,6 +251,10 @@ class MaterialPlayer(Person):
         for index, card in enumerate(self.cards_CANNOT_play):
             if card.id == card_id:
                 return len(self.cards_CAN_play) + index
+        print "Did not find match in MaterialPlayer"
+        print self.cards_CANNOT_play
+        print self.cards_CAN_play
+        sys.exit(1)
 
     def neighborDoesNotHaveMaterial(self, ability):
         for key, value in self.neighbor["left"].board.material.items():
