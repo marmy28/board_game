@@ -24,3 +24,6 @@ class GeneralTests(unittest.TestCase):
 
     def test_whatMaterialColorNA(self):
         self.assertEqual(whatMaterialColor("random"), "NA")
+
+    def test_getScienceScore(self):
+        self.assertEqual(getScienceScore({"tablet": 1, "wheel": 2, "compass": 1}), 13)
