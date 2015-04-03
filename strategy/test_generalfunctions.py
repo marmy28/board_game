@@ -1,5 +1,5 @@
 import unittest
-from generalfunctions import *
+from strategy.generalfunctions import *
 
 
 class GeneralTests(unittest.TestCase):
@@ -16,3 +16,11 @@ class GeneralTests(unittest.TestCase):
         second_dict = [{"ore": 1, "wood": 2}, {"clay": 1, "stone": 2}]
         self.assertEqual(first_dict, second_dict)
 
+    def test_whatMaterialColorBrown(self):
+        self.assertEqual(whatMaterialColor("ore"), "brown")
+
+    def test_whatMaterialColorGray(self):
+        self.assertEqual(whatMaterialColor("loom"), "gray")
+
+    def test_whatMaterialColorNA(self):
+        self.assertEqual(whatMaterialColor("random"), "NA")
