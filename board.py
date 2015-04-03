@@ -45,7 +45,7 @@ class Board(object):
         if (self.material[material_name] + number_to_change) >= 0:
             self.material[material_name] += number_to_change
         else:
-            print 'Cannot do this transaction: insufficient funds'
+            raise Exception('Cannot do this transaction: insufficient funds')
 
     def newSplitMaterial(self, ability):
         """Adds to your split materials which is different than your normal materials since you can

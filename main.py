@@ -39,6 +39,7 @@ class Game(object):
 
         self.player_name = ['Matthew', 'Kristina', 'Scott', 'Kyle', 'Kevin', 'Katie', 'Jon']
         self.player_strategy = []
+        a = inspect.getmodule(strategy)
         for name, obj in inspect.getmembers(strategy, inspect.isclass):
             if hasattr(obj, 'difficulty') and obj.difficulty == difficulty_level:
                 if hasattr(obj, 'number_in_options'):
@@ -137,7 +138,7 @@ class Game(object):
                 self.player[i].neighbor['right'] = self.player[0]
 
             self.player[i].printName()
-            print self.player[i].__class__.__name__
+            print(self.player[i].__class__.__name__)
             i += 1
 
     def handOutCards(self):
@@ -161,18 +162,18 @@ class Game(object):
             #             self.player[i] = change_strategy
             #         i += 1
         else:
-            print 'GAME OVER!'
+            print('GAME OVER!')
             final_score = []
             for player in self.player:
                 player.printName()
-                print ''
-                print player.__class__.__name__
-                print ''
+                print('')
+                print(player.__class__.__name__)
+                print('')
                 final_score.append((player.printScore(), player.name, player.__class__.__name__))
-            print '\n\n'
+            print('\n\n')
             final_score = sorted(final_score, key=lambda tup: tup[0], reverse=True)
             for score, name, class_name in final_score:
-                print name, class_name, score
+                print(name, class_name, score)
             sys.exit(0)  # TODO will put connection to end game here
 
     def goToNextAge(self):
@@ -261,7 +262,7 @@ class Game(object):
                     break
 
         if player_can_play_both != "":
-            print "PLAYING BOTH", player_can_play_both
+            print("PLAYING BOTH", player_can_play_both)
             for player_decision in self.player:
                 if player_decision.name == player_can_play_both:
                     if player_decision.cards_CAN_play:
@@ -300,15 +301,15 @@ if __name__ == '__main__':
     try:
         int(sys.argv[1])
     except ValueError:
-        print "The number of players must be an integer."
+        print("The number of players must be an integer.")
         sys.exit(1)
     except IndexError:
-        print "Include the number of players after main.py."
+        print("Include the number of players after main.py.")
         sys.exit(1)
     if 2 < int(sys.argv[1]) < 8:
         number_of_players = int(sys.argv[1])
     else:
-        print "This game is for 3 to 7 players not %s." % sys.argv[1]
+        print("This game is for 3 to 7 players not %s." % sys.argv[1])
         sys.exit(1)
 
     play_game = Game(number_of_players, level, just_computer=True)  # change this to true when debugging

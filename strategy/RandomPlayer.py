@@ -1,5 +1,5 @@
 import random
-from person import Person
+from strategy.person import Person
 
 
 class RandomPlayer(Person):

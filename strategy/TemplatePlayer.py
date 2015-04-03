@@ -1,4 +1,4 @@
-from person import Person  # this allows you to use the functions in Person
+from strategy.person import Person  # this allows you to use the functions in Person
 import random  # I have this because currently random is used.
 
 # The filename and the class must be the same name

@@ -41,8 +41,7 @@ def compareDicts(my_dict):
     while i < len(my_dict) - 1:
         j = i + 1
         while j < len(my_dict):
-            if my_dict[i].keys() == my_dict[j].keys() \
-                    and my_dict[i].values() == my_dict[j].values():
+            if my_dict[i] == my_dict[j]:
                 my_dict.pop(j)
             else:
                 j += 1
@@ -146,7 +145,7 @@ def canBuyThroughTrade(needed_materials, trade_cost, neighbors_materials):
     """This will send back the trading and modify the needed_materials...only for non-split materials.
 
     :param needed_materials: List of needed materials to buy the card or wonder.
-    :type needed_materials: dict
+    :type needed_materials: dict | list
     :param trade_cost: How much it costs to trade with each neighbor.
     :type trade_cost: dict
     :param neighbors_materials: Your neighbor's materials.
@@ -177,7 +176,7 @@ def exterminateTooExpensiveOrGray(trading_cost, card_cost, mat_array, coin_have,
     :param card_cost: How much coin is needed to buy the card or wonder.
     :type card_cost: int
     :param mat_array: Materials needed to buy the card or wonder.
-    :type mat_array: dict
+    :type mat_array: dict | list
     :param coin_have: The coin you have available to spend.
     :type coin_have: int
     :param check_gray: Whether or not to check for gray cards.

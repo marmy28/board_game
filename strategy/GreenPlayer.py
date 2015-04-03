@@ -1,4 +1,4 @@
-from person import Person
+from strategy.person import Person
 
 
 class GreenPlayer(Person):

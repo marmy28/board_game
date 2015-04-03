@@ -1,4 +1,4 @@
-from person import Person
+from strategy.person import Person
 import random
 import sys
 
@@ -76,10 +76,10 @@ class MaterialPlayer(Person):
                 self.my_player_action = "playWonder"
                 self.burnCard()
         if self.my_player_card >= (len(self.cards_CAN_play) + len(self.cards_CANNOT_play)):
-            print "Material Player wants to play", self.my_player_card
-            print self.cards_CAN_play
-            print self.cards_CANNOT_play
-            print "FATAL ERROR"
+            print("Material Player wants to play", self.my_player_card)
+            print(self.cards_CAN_play)
+            print(self.cards_CANNOT_play)
+            print("FATAL ERROR")
             sys.exit(1)
         return self.my_player_action, self.my_player_card
         # the player_action can be: playCard, discardCard, or playWonder
@@ -251,9 +251,9 @@ class MaterialPlayer(Person):
         for index, card in enumerate(self.cards_CANNOT_play):
             if card.id == card_id:
                 return len(self.cards_CAN_play) + index
-        print "Did not find match in MaterialPlayer"
-        print self.cards_CANNOT_play
-        print self.cards_CAN_play
+        print("Did not find match in MaterialPlayer")
+        print(self.cards_CANNOT_play)
+        print(self.cards_CAN_play)
         sys.exit(1)
 
     def neighborDoesNotHaveMaterial(self, ability):

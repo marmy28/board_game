@@ -1,11 +1,11 @@
-from person import Person
+from strategy.person import Person
 
 
 class HumanPlayer(Person):
     """This is the actual player."""
     def __init__(self, the_board):
-        name = raw_input("What is your name? ")
-        print "Hello ", name
+        name = input("What is your name? ")
+        print("Hello ", name)
         super(HumanPlayer, self).__init__(name, the_board)
 
     def decisionForTurn(self, check_hand=True):
@@ -20,9 +20,9 @@ class HumanPlayer(Person):
     def makeDecision(self):
         me = self
         while True:
-            ask = raw_input("lc: left character, rc: right character, m: misc, " +
-                            "c: cards in hand, me: me, br: be right character, " +
-                            "bl: be left character, bm: be me, n: next\n")
+            ask = input("lc: left character, rc: right character, m: misc, " +
+                        "c: cards in hand, me: me, br: be right character, " +
+                        "bl: be left character, bm: be me, n: next\n")
             if ask == "lc":
                 me.neighbor['left'].printCharacter()
             elif ask == "rc":
@@ -42,8 +42,8 @@ class HumanPlayer(Person):
             elif ask == "n":
                 break
 
-        player_action = raw_input("1: playCard 2: discardCard 3: playWonder? ")
-        player_card = int(raw_input("Which card (int)? "))
+        player_action = input("1: playCard 2: discardCard 3: playWonder? ")
+        player_card = int(input("Which card (int)? "))
         if player_action == "1":
             player_action = "playCard"
         elif player_action == "2":

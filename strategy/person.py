@@ -1,6 +1,4 @@
-__author__ = "Matthew"
-
-import generalfunctions as GF
+import strategy.generalfunctions as GF
 import sys
 
 
@@ -446,28 +444,28 @@ class Person(object):
 
         :rtype: None
         """
-        print '\nMaterials\n----------'
+        print('\nMaterials\n----------')
         for keys, values in self.board.material.items():
-            print values, keys
+            print(values, keys)
         if self.board.split_material:
             for keys1, value1 in self.board.split_material.items():
-                print '1', value1.keys()[0], '/', value1.keys()[1]
+                print('1', value1.keys()[0], '/', value1.keys()[1])
         if self.any_material:
             for keys, values in self.any_material.items():
-                print '1', values.keys()
+                print('1', values.keys())
 
     def printName(self):
         """Prints your name, your neighbor's name and how much to trade.
 
         :rtype: None
         """
-        print '\nName\n----------'
+        print('\nName\n----------')
         for keys, values in self.neighbor.items():
-            print ' ', keys, '=', values.name, values.board.name
+            print(' ', keys, '=', values.name, values.board.name)
             if keys in self.trade:
-                print '    ', self.trade[keys]
+                print('    ', self.trade[keys])
             else:
-                print ''
+                print('')
 
     def printCardsInHand(self):
         """Prints whether or not you can afford your wonder. Prints your wonders. Prints the cards in your hand
@@ -476,18 +474,18 @@ class Person(object):
         :rtype: None
         """
         if self.can_afford_wonder:
-            print 'Can afford wonder'
+            print('Can afford wonder')
         else:
-            print 'Cannot afford wonder'
+            print('Cannot afford wonder')
         self.printWonders()
-        print '\nCards\n----------'
+        print('\nCards\n----------')
         for i in range(0, len(self.cards_CAN_play)):
-            print i, self.cards_CAN_play[i].name, '-->', self.cards_CAN_play[i].ability \
-                , '---', self.cards_CAN_play[i].cost, self.cards_CAN_play[i].trading_cost
-        print ''
+            print(i, self.cards_CAN_play[i].name, '-->', self.cards_CAN_play[i].ability,
+                  '---', self.cards_CAN_play[i].cost, self.cards_CAN_play[i].trading_cost)
+        print('')
         for i in range(0, len(self.cards_CANNOT_play)):
-            print (i+len(self.cards_CAN_play)), self.cards_CANNOT_play[i].name, \
-                '-->', self.cards_CANNOT_play[i].ability
+            print((i+len(self.cards_CAN_play)), self.cards_CANNOT_play[i].name,
+                  '-->', self.cards_CANNOT_play[i].ability)
 
     def printPlayedCards(self):
         """Prints the cards you have played. This is grouped by the key (color or wonder).
@@ -495,39 +493,39 @@ class Person(object):
         :rtype: None
         """
         for color, cards in self.cards_played.items():
-            print color
-            print '----------'
+            print(color)
+            print('----------')
             for card in cards:
-                print card.name, card.ability
-            print ''
+                print(card.name, card.ability)
+            print('')
 
     def printWonders(self):
         """Prints your board and the wonders you have left to buy.
 
         :rtype: None
         """
-        print self.board.name
-        print self.board.side
+        print(self.board.name)
+        print(self.board.side)
         for wonder in self.board.wonders:
-            print wonder.cost
-            print wonder.trading_cost
-            print wonder.color
-            print wonder.ability
-            print ''
+            print(wonder.cost)
+            print(wonder.trading_cost)
+            print(wonder.color)
+            print(wonder.ability)
+            print('')
 
     def printMisc(self):
         """Prints your shield count, military wins, military loses, blue points, and science.
 
         :rtype: None
         """
-        print '\nExtra\n----------'
-        print self.shield_count, 'shield(s)'
-        print self.military_points_win, 'military win'
-        print self.military_points_loss, 'military loss'
-        print self.blue_points, 'victory points'
-        print self.any_science, 'any science'
+        print('\nExtra\n----------')
+        print(self.shield_count, 'shield(s)')
+        print(self.military_points_win, 'military win')
+        print(self.military_points_loss, 'military loss')
+        print(self.blue_points, 'victory points')
+        print(self.any_science, 'any science')
         for keys, values in self.science.items():
-            print values, keys
+            print(values, keys)
 
     def printCharacter(self):
         """Prints your name, materials, played cards, etc.
@@ -548,14 +546,14 @@ class Person(object):
         self.resolveCardAbilityENDOFGAME()
         total = (self.military_points_win + self.military_points_loss + self.blue_points
                  + self.highestScienceValue() + (self.board.material['coin']/3) + self.end_of_game_points)
-        print 'Military wins', self.military_points_win
-        print 'Military losses', self.military_points_loss
-        print 'Blue points', self.blue_points
-        print 'Science points', self.highestScienceValue()
-        print 'Coin points', (self.board.material['coin']/3)
-        print 'EOG points', self.end_of_game_points
-        print '-----'
-        print 'Total', total
+        print('Military wins', self.military_points_win)
+        print('Military losses', self.military_points_loss)
+        print('Blue points', self.blue_points)
+        print('Science points', self.highestScienceValue())
+        print('Coin points', (self.board.material['coin']/3))
+        print('EOG points', self.end_of_game_points)
+        print('-----')
+        print('Total', total)
         return total
 
     def playCard(self, card_to_play, age):
@@ -573,7 +571,7 @@ class Person(object):
         try:
             self.play_this_card = self.cards_CAN_play.pop(card_to_play)
             if self.free_card[age-1] and self.use_free_card:
-                print self.name, 'gets free card'
+                print(self.name, 'gets free card')
                 self.play_this_card.makeFree()
                 self.free_card[age-1] = False
         except IndexError:
@@ -582,7 +580,7 @@ class Person(object):
                 self.play_this_card.makeFree()
                 self.free_card[age-1] = False
             else:
-                print 'ACTUALLY discard', self.name
+                print('ACTUALLY discard', self.name)
                 self.discardCard(card_to_play)
         if self.play_this_card is not None:
             if self.play_this_card.color not in self.cards_played:
@@ -613,13 +611,13 @@ class Person(object):
                 self.discard_this_card = self.cards_CANNOT_play.pop(card_to_discard
                                                                     - len(self.cards_CAN_play))
             except IndexError as e:
-                print 'discardCard function'
-                print e.args
-                print e.message
-                print self.cards_CANNOT_play
-                print self.cards_CAN_play
-                print card_to_discard
-                print 'ERROR ERROR ERROR'
+                print('discardCard function')
+                print(e.args)
+                print(e.__context__)
+                print(self.cards_CANNOT_play)
+                print(self.cards_CAN_play)
+                print(card_to_discard)
+                print('ERROR ERROR ERROR')
                 sys.exit(1)
         self.discard_this_card.makeFree()
         self.board.newMaterial(u'coin', 3)
@@ -643,13 +641,13 @@ class Person(object):
                     self.cards_CANNOT_play.pop(card_construction_marker
                                                - len(self.cards_CAN_play))
                 except IndexError as e:
-                    print 'playWonder function'
-                    print e.args
-                    print e.message
-                    print self.cards_CANNOT_play
-                    print self.cards_CAN_play
-                    print card_construction_marker
-                    print 'ERROR ERROR ERROR'
+                    print('playWonder function')
+                    print(e.args)
+                    print(e.__context__)
+                    print(self.cards_CANNOT_play)
+                    print(self.cards_CAN_play)
+                    print(card_construction_marker)
+                    print('ERROR ERROR ERROR')
                     sys.exit(1)
             if 'wonder' not in self.cards_played:
                 self.cards_played['wonder'] = []
