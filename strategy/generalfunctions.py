@@ -156,7 +156,8 @@ def canBuyThroughTrade(needed_materials, trade_cost, neighbors_materials):
     material_to_money = []
     for mat_options in needed_materials:
         spend_to_trade = 0
-        for mat, amount in mat_options.items():
+        mat_options_copy = mat_options.copy()
+        for mat, amount in mat_options_copy.items():
             if mat in neighbors_materials:
                 if neighbors_materials[mat] >= abs(amount):
                     spend_to_trade += (abs(amount)*trade_cost[whatMaterialColor(mat)])
