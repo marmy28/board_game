@@ -106,7 +106,8 @@ def buyWithSplit(cost_copy, split_mat):
                 i += 1
 
         for option in cost_copy:
-            for k, v in option.items():
+            duplicate_option = option.copy()
+            for k, v in duplicate_option.items():
                 if v >= 0:
                     option.pop(k)
 
