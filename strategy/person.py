@@ -121,7 +121,7 @@ class Person(object):
         """
         # look in change_class.py if need help. will need to change over all of init parameters
         # may make this a definition in generalfunctions.py
-        pass  # TODO change of strategy!
+        pass  # TODO write function and implement in game and unit testing
 
     def highestScienceValue(self):
         """Finds the highest science value with the science wildcards added in.
@@ -260,7 +260,7 @@ class Person(object):
         elif ability == "1 card free per age":
             self.free_card = [True, True, True]
         else:
-            pass
+            raise Exception("%s is not recognized in special" % ability)
 
     def checkCardsInHand(self):
         """Moves cards from cards_in_hand to either cards_CAN_play or cards_CANNOT_play. This uses the function
@@ -716,6 +716,8 @@ class Person(object):
             self.addToTrading(self.play_this_card.ability, self.play_this_card.age)
         elif self.play_this_card.color == 'purple':
             self.addToGuilds(self.play_this_card.ability)
+        else:
+            raise Exception("Card color not recognized.")
         self.play_this_card = None
 
     def pointsForEndCard(self, ability):
