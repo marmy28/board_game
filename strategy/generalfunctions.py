@@ -247,7 +247,8 @@ def buyWithSplitTrade(cost, split_mat, trade_cost, coin_array, side):
                 i += 1
 
         for option in cost:
-            for k, v in option.items():
+            option_copy = option.copy()
+            for k, v in option_copy.items():
                 if v >= 0:
                     option.pop(k)
 
